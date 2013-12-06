@@ -12,7 +12,12 @@ public class MainProgram {
 		Kernels.setPreferredKernelFactory(new JxtaJxseKernelAgentFactory());
 		Kernel kernel = Kernels.get(true);	
 		NetAgent agentReceiver = new NetAgent("agentReceiver");
-		kernel.launchHeavyAgent(agentReceiver,"agentReceiver","collecteur");
+		NetAgent bob = new NetAgent("bob");
+		//NetAgent tod = new NetAgent("tod");
+		System.out.println(MonitoredAgentLauncher.launchHeavyAgent(kernel,agentReceiver,"collecteur").toString());
+		System.out.println(MonitoredAgentLauncher.launchHeavyAgent(kernel,bob,"receiver").toString());
+	
+		//kernel.launchHeavyAgent(tod,"tod","receiver");
 
 	}
 }

@@ -19,16 +19,17 @@ public class NetAgent extends Agent{
 	
 	@Override
 	public Status activate(Object... parameters) {
+		System.out.println("parameters: "+parameters[0].toString());
 		GroupAddress gaddr = getOrCreateGroup(OrganizationNet.class);
 		if(parameters[0] instanceof String) {
 			if(parameters[0] == "collecteur") {
 				if (requestRole(RoleSender.class,gaddr)==null) {
-					return StatusFactory.cancel(this);
+					return StatusFactory.ok(this);
 				}
 			}
-			else {
+			else if(parameters[0] == "receiver")  {
 				if (requestRole(RoleReceiver.class,gaddr)==null) {
-					return StatusFactory.cancel(this);
+					return StatusFactory.ok(this);
 				}
 			}
 		}
@@ -38,6 +39,7 @@ public class NetAgent extends Agent{
 	@Override
 	public Status live() {
 		Status s = super.live();
+		//print("I'm alive");
 //		StringMessage m = new StringMessage("Salut ptite bite");
 //		broadcastMessage(m, (AgentAddress[]) null);
 //		print("spaming");
