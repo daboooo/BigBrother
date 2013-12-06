@@ -26,7 +26,7 @@ public class NetAgent extends Agent{
 					return StatusFactory.cancel(this);
 				}
 			}
-			else {
+			else if(parameters[0] == "receiver")  {
 				if (requestRole(RoleReceiver.class,gaddr)==null) {
 					return StatusFactory.cancel(this);
 				}

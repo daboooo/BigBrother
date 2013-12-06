@@ -2,6 +2,7 @@ package ia54Project;
 
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.message.Message;
+import org.janusproject.kernel.message.StringMessage;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
 
@@ -29,9 +30,14 @@ public class RoleReceiver  extends Role{
 		Message m = getMessage();
 		if( m != null) {
 			print(m);
+			if( m instanceof StringMessage) {
+				if(((StringMessage) m).getContent() == "over") {
+					//this.broadcastMessage(RoleSender.class, new StringMessage("send"));
+				}
+			}
 		}
 		else {
-			print("waiting message");
+			//print("waiting message");
 		}
 		return StatusFactory.ok(this);
 	}
