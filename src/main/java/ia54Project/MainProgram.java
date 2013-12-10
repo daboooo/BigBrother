@@ -10,6 +10,5 @@ public class MainProgram {
 	public static void main(String[] args) {
 		Kernels.setPreferredKernelFactory(new MonitoredKernelAgentFactory());
 		Kernel kernel = Kernels.get(true);	
-
 	}
 }
