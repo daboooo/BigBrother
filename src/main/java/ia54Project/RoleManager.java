@@ -7,7 +7,7 @@ import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
 
 
-public class RoleReceiver  extends Role{
+public class RoleManager  extends Role{
 
 	private State state;
 	
@@ -27,24 +27,24 @@ public class RoleReceiver  extends Role{
 	
 	@Override
 	public Status live() {
-		
-		String d = (String) getMemorizedData("test");
-		if(d!= null) {
-			print (d);
-		}
-		Message m = getMessage();
-		if( m != null) {
-			print("MailboxSize: " + getMailboxSize());
-			print(m);
-			if( m instanceof StringMessage) {
-				if(((StringMessage) m).getContent() == "over") {
-					//this.broadcastMessage(RoleSender.class, new StringMessage("send"));
-				}
-			}
-		}
-		else {
-			//print("waiting message");
-		}
+		print("Je suis dans le role manager");
+//		String d = (String) getMemorizedData("test");
+//		if(d!= null) {
+//			print (d);
+//		}
+//		Message m = getMessage();
+//		if( m != null) {
+//			print("MailboxSize: " + getMailboxSize());
+//			print(m);
+//			if( m instanceof StringMessage) {
+//				if(((StringMessage) m).getContent() == "over") {
+//					//this.broadcastMessage(RoleSender.class, new StringMessage("send"));
+//				}
+//			}
+//		}
+//		else {
+//			//print("waiting message");
+//		}
 		return StatusFactory.ok(this);
 	}
 

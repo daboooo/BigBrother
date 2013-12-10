@@ -3,13 +3,14 @@ package ia54Project;
 import org.janusproject.kernel.crio.core.CRIOContext;
 import org.janusproject.kernel.crio.core.Organization;
 
-public class OrganizationNet extends Organization{
+public class OrganizationManager extends Organization{
 
-	public OrganizationNet(CRIOContext crioContext) {
+	public OrganizationManager(CRIOContext crioContext) {
 		super(crioContext);
 		
-		addRole(RoleReceiver.class);
-		addRole(RoleSender.class);
+		addRole(RoleManager.class);
+		addRole(RoleCollecteur.class);
+		addRole(RoleExecutant.class);
 	}
 
 }
