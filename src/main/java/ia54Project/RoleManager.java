@@ -1,5 +1,8 @@
 package ia54Project;
 
+import ia54Project.RoleCollecteur.State;
+
+import org.janusproject.kernel.crio.core.HasAllRequiredCapacitiesCondition;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.message.StringMessage;
@@ -21,7 +24,8 @@ public class RoleManager  extends Role{
 
 	@Override
 	public Status activate(Object... parameters) {
-		this.setState(State.RECEIVING); 	
+		this.setState(State.RECEIVING); 
+		addObtainCondition(new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
 		return StatusFactory.ok(this);
 	}
 	
