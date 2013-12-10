@@ -1,4 +1,4 @@
-package ia54Project;
+package org.ia54Project.agent;
 
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.crio.core.GroupAddress;

@@ -1,4 +1,4 @@
-package ia54Project;
+package org.ia54Project;
 
 import org.janusproject.kernel.Kernel;
 import org.janusproject.kernel.agent.Kernels;

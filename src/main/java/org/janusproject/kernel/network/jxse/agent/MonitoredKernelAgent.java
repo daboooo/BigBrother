@@ -1,13 +1,12 @@
 package org.janusproject.kernel.network.jxse.agent;
 
-import ia54Project.CapacityGetAgentRepository;
-import ia54Project.OrganizationManager;
-import ia54Project.RoleCollecteur;
-import ia54Project.RoleExecutant;
-import ia54Project.RoleManager;
-
 import java.util.EventListener;
 
+import org.ia54Project.organization.CapacityGetAgentRepository;
+import org.ia54Project.organization.OrganizationManager;
+import org.ia54Project.organization.RoleCollecteur;
+import org.ia54Project.organization.RoleExecutant;
+import org.ia54Project.organization.RoleManager;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;

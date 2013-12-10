@@ -1,4 +1,4 @@
-package ia54Project;
+package org.ia54Project.organization;
 
 import org.janusproject.kernel.crio.capacity.Capacity;
 import org.janusproject.kernel.crio.capacity.CapacityPrototype;

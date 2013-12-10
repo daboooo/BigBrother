@@ -1,4 +1,4 @@
-package ia54Project;
+package org.ia54Project.organization;
 
 import java.util.Collection;
 import java.util.List;
