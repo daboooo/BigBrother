@@ -27,8 +27,14 @@ public class RoleReceiver  extends Role{
 	
 	@Override
 	public Status live() {
+		
+		String d = (String) getMemorizedData("test");
+		if(d!= null) {
+			print (d);
+		}
 		Message m = getMessage();
 		if( m != null) {
+			print("MailboxSize: " + getMailboxSize());
 			print(m);
 			if( m instanceof StringMessage) {
 				if(((StringMessage) m).getContent() == "over") {

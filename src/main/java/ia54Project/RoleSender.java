@@ -1,12 +1,22 @@
 package ia54Project;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
+import org.janusproject.kernel.agent.Kernels;
+import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.core.GroupAddress;
+import org.janusproject.kernel.crio.core.HasAllRequiredCapacitiesCondition;
 import org.janusproject.kernel.crio.core.Role;
+import org.janusproject.kernel.crio.core.RoleAddress;
 import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.message.StringMessage;
+import org.janusproject.kernel.repository.Repository;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
+import org.janusproject.kernel.util.sizediterator.SizedIterator;
 
 
 public class RoleSender extends Role{
@@ -14,9 +24,13 @@ public class RoleSender extends Role{
 	private State state;
 	private int nbMessageToSend = 5;
 	private int sentMsg = 0;
+	
 	@Override
 	public Status activate(Object... parameters) {
 		this.setState(State.SEND_AGENTS_INFO); 	
+		addObtainCondition(
+		        new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
+
 		return StatusFactory.ok(this);
 	}
 	
@@ -24,12 +38,28 @@ public class RoleSender extends Role{
 	public Status live() {
 		switch (state) {
 		case SEND_AGENTS_INFO:
-			print ("Size agents: " + MonitoredAgentLauncher.getAgents().size());
-			for (Agent ag : MonitoredAgentLauncher.getAgents()) {
-				broadcastMessage(RoleReceiver.class, buildMessage(ag));
+			CapacityContext cc = null;
+			try {
+				cc = executeCapacityCall(CapacityGetAgentRepository.class);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			broadcastMessage(RoleReceiver.class, new StringMessage("over"));
-			state = State.WAITING_ORDER;
+			if(cc!=null && cc.isResultAvailable()) {
+				Object res = cc.getOutputValueAt(0);
+				if(res instanceof Repository<?, ?>) {
+					Repository<AgentAddress, Agent> repo = (Repository<AgentAddress, Agent>) res;
+					Collection<AgentAddress> addr = repo.identifiers();
+					
+					print ("Size agents: " + addr.size());
+					for (AgentAddress ad : addr) {
+						broadcastMessage(RoleReceiver.class, buildMessage(repo.get(ad)));
+						
+					}
+					broadcastMessage(RoleReceiver.class, new StringMessage("over"));
+					state = State.WAITING_ORDER;
+				}
+			}
 			break;
 		case WAITING_ORDER:
 			Message order = getMessage();
@@ -45,30 +75,6 @@ public class RoleSender extends Role{
 			print("error default");
 		}
 		
-		
-//		switch (state) {		
-//		
-//		case SENDING:
-//				StringMessage m = new StringMessage("Hello");
-//				this.broadcastMessage(RoleReceiver.class,m);
-//				sentMsg++;
-//				if(sentMsg == nbMessageToSend) {
-//					state = State.WAITING_ORDER;
-//					broadcastMessage(RoleReceiver.class, new StringMessage("over"));
-//				}
-//		break;
-//		case WAITING_ORDER:
-//			Message order = getMessage();
-//			if (order!= null) {
-//				if(order instanceof StringMessage) {
-//					if(((StringMessage) order).getContent() == "send") {
-//						sentMsg = 0;
-//						state = State.SENDING;
-//					}
-//				}
-//			}
-//		break;	
-//		}
 		return StatusFactory.ok(this);
 	}
 	

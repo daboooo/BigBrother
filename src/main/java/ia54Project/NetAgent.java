@@ -19,12 +19,14 @@ public class NetAgent extends Agent{
 	
 	@Override
 	public Status activate(Object... parameters) {
-		System.out.println("parameters: "+parameters[0].toString());
-		GroupAddress gaddr = getOrCreateGroup(OrganizationNet.class);
 		if(parameters[0] instanceof String) {
+			GroupAddress gaddr = getOrCreateGroup(OrganizationNet.class);
 			if(parameters[0] == "collecteur") {
 				if (requestRole(RoleSender.class,gaddr)==null) {
 					return StatusFactory.ok(this);
+				}
+				else {
+					print("failed to get sender");
 				}
 			}
 			else if(parameters[0] == "receiver")  {
@@ -38,7 +40,9 @@ public class NetAgent extends Agent{
 	
 	@Override
 	public Status live() {
-		Status s = super.live();
+		Status s = null;
+		if(isPlayingRole())
+			s = super.live();
 		//print("I'm alive");
 //		StringMessage m = new StringMessage("Salut ptite bite");
 //		broadcastMessage(m, (AgentAddress[]) null);
