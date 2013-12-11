@@ -30,24 +30,20 @@ public class RoleManager  extends Role{
 	
 	@Override
 	public Status live() {
-		print("Je suis dans le role manager");
-//		String d = (String) getMemorizedData("test");
-//		if(d!= null) {
-//			print (d);
-//		}
-//		Message m = getMessage();
-//		if( m != null) {
-//			print("MailboxSize: " + getMailboxSize());
-//			print(m);
-//			if( m instanceof StringMessage) {
-//				if(((StringMessage) m).getContent() == "over") {
-//					//this.broadcastMessage(RoleSender.class, new StringMessage("send"));
-//				}
-//			}
-//		}
-//		else {
-//			//print("waiting message");
-//		}
+		//print("Je suis dans le role manager");
+		Message m = getMessage();
+		if( m != null) {
+			print("MailboxSize: " + getMailboxSize());
+			print(m);
+			if( m instanceof StringMessage) {
+				if(((StringMessage) m).getContent() == "over") {
+					this.broadcastMessage(RoleCollecteur.class, new StringMessage("AGENT_INFOS"));
+				}
+			}
+		}
+		else {
+			//print("waiting message");
+		}
 		return StatusFactory.ok(this);
 	}
 

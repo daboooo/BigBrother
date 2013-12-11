@@ -3,8 +3,10 @@ package org.janusproject.kernel.network.jxse.agent;
 import java.util.EventListener;
 
 import org.ia54Project.organization.CapacityGetAgentRepository;
+import org.ia54Project.organization.OrganizationController;
 import org.ia54Project.organization.OrganizationManager;
 import org.ia54Project.organization.RoleCollecteur;
+import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
 import org.ia54Project.organization.RoleManager;
 import org.janusproject.kernel.address.AgentAddress;
@@ -37,19 +39,24 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		private static final long serialVersionUID = 2596479307519818391L;
 
 		public Status activate(Object... parameters) {
+			Status s = null;
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
 			GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
 			
 			if (requestRole(RoleManager.class,gaddr)==null) {
-				return StatusFactory.ok(this);
+				s = StatusFactory.ok(this);
+			} 
+			GroupAddress gaddrController = getOrCreateGroup(OrganizationController.class);
+			if(requestRole(RoleControlManager.class,gaddrController) == null) {
+				s =  StatusFactory.ok(this);
+				return s;
 			}
-			
 			return super.activate(parameters);
 		}
 		
 		@Override
 		public Status live() {
-			print("je prend le role Manager");
+			//print("je prend le role Manager");
 			
 			return super.live();
 		}
@@ -73,7 +80,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			
 			@Override
 			public Status live() {
-				print("je prend le role Executant");
+				//print("je prend le role Executant");
 				
 				return super.live();
 			}
@@ -99,7 +106,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		
 		@Override
 		public Status live() {
-			print("je prend le role Collecteur");
+			//print("je prend le role Collecteur");
 			
 			return super.live();
 		}	

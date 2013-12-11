@@ -16,7 +16,7 @@ public class RoleExecutant extends Role{
 	
 	@Override
 	public Status live() {
-		print("Je suis dans le role executant");
+		//print("Je suis dans le role executant");
 		return null;
 	}
 

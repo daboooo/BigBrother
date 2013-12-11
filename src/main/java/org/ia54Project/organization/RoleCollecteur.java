@@ -36,46 +36,46 @@ public class RoleCollecteur extends Role{
 	
 	@Override
 	public Status live() {
-		print("Je suis dans le role collecteur");
+	//	print("Je suis dans le role collecteur");
 		
-//		switch (state) {
-//		case SEND_AGENTS_INFO:
-//			CapacityContext cc = null;
-//			try {
-//				cc = executeCapacityCall(CapacityGetAgentRepository.class);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			if(cc!=null && cc.isResultAvailable()) {
-//				Object res = cc.getOutputValueAt(0);
-//				if(res instanceof Repository<?, ?>) {
-//					Repository<AgentAddress, Agent> repo = (Repository<AgentAddress, Agent>) res;
-//					Collection<AgentAddress> addr = repo.identifiers();
-//					
-//					print ("Size agents: " + addr.size());
-//					for (AgentAddress ad : addr) {
-//						broadcastMessage(RoleManager.class, buildMessage(repo.get(ad)));
-//						
-//					}
-//					broadcastMessage(RoleManager.class, new StringMessage("over"));
-//					state = State.WAITING_ORDER;
-//				}
-//			}
-//			break;
-//		case WAITING_ORDER:
-//			Message order = getMessage();
-//			if (order!= null) {
-//				if(order instanceof StringMessage) {
-//					if(((StringMessage) order).getContent() == "AGENT_INFOS") {
-//						state = State.SEND_AGENTS_INFO;
-//					}
-//				}
-//			}
-//		break;	
-//		default:
-//			print("error default");
-//		}
+		switch (state) {
+		case SEND_AGENTS_INFO:
+			CapacityContext cc = null;
+			try {
+				cc = executeCapacityCall(CapacityGetAgentRepository.class);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(cc!=null && cc.isResultAvailable()) {
+				Object res = cc.getOutputValueAt(0);
+				if(res instanceof Repository<?, ?>) {
+					Repository<AgentAddress, Agent> repo = (Repository<AgentAddress, Agent>) res;
+					Collection<AgentAddress> addr = repo.identifiers();
+					
+					print ("Size agents: " + addr.size());
+					for (AgentAddress ad : addr) {
+						broadcastMessage(RoleManager.class, buildMessage(repo.get(ad)));
+						
+					}
+					broadcastMessage(RoleManager.class, new StringMessage("over"));
+					state = State.WAITING_ORDER;
+				}
+			}
+			break;
+		case WAITING_ORDER:
+			Message order = getMessage();
+			if (order!= null) {
+				if(order instanceof StringMessage) {
+					if(((StringMessage) order).getContent() == "AGENT_INFOS") {
+						state = State.SEND_AGENTS_INFO;
+					}
+				}
+			}
+		break;	
+		default:
+			print("error default");
+		}
 		
 		return StatusFactory.ok(this);
 	}
