@@ -28,54 +28,59 @@ public class RoleCollecteur extends Role{
 	@Override
 	public Status activate(Object... parameters) {
 		this.setState(State.SEND_AGENTS_INFO); 	
-		addObtainCondition(
-		        new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
+		addObtainCondition(new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
 
 		return StatusFactory.ok(this);
 	}
 	
 	@Override
 	public Status live() {
-	//	print("Je suis dans le role collecteur");
+		Message message = new StringMessage("Bonjour Manager");
+		print("Je suis dans le role collecteur et j'envoie : " + message.toString());
+		broadcastMessage(RoleManager.class, message);
 		
-		switch (state) {
-		case SEND_AGENTS_INFO:
-			CapacityContext cc = null;
-			try {
-				cc = executeCapacityCall(CapacityGetAgentRepository.class);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(cc!=null && cc.isResultAvailable()) {
-				Object res = cc.getOutputValueAt(0);
-				if(res instanceof Repository<?, ?>) {
-					Repository<AgentAddress, Agent> repo = (Repository<AgentAddress, Agent>) res;
-					Collection<AgentAddress> addr = repo.identifiers();
-					
-					print ("Size agents: " + addr.size());
-					for (AgentAddress ad : addr) {
-						broadcastMessage(RoleManager.class, buildMessage(repo.get(ad)));
-						
-					}
-					broadcastMessage(RoleManager.class, new StringMessage("over"));
-					state = State.WAITING_ORDER;
-				}
-			}
-			break;
-		case WAITING_ORDER:
-			Message order = getMessage();
-			if (order!= null) {
-				if(order instanceof StringMessage) {
-					if(((StringMessage) order).getContent() == "AGENT_INFOS") {
-						state = State.SEND_AGENTS_INFO;
-					}
-				}
-			}
-		break;	
-		default:
-			print("error default");
-		}
+//		switch (state) {
+//		case SEND_AGENTS_INFO:
+//			CapacityContext cc = null;
+//			
+//			try {
+//				cc = executeCapacityCall(CapacityGetAgentRepository.class);
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			
+//			if(cc!=null && cc.isResultAvailable()) {
+//				Object res = cc.getOutputValueAt(0);
+//				
+//				if(res instanceof Repository<?, ?>) {
+//					Repository<AgentAddress, Agent> repo = (Repository<AgentAddress, Agent>) res;
+//					Collection<AgentAddress> addr = repo.identifiers();
+//					
+//					print ("Size agents: " + addr.size());
+//					
+//					for (AgentAddress ad : addr) {
+//						broadcastMessage(RoleManager.class, buildMessage(repo.get(ad)));
+//					}
+//					
+//					broadcastMessage(RoleManager.class, new StringMessage("over"));
+//					state = State.WAITING_ORDER;
+//				}
+//			}
+//			break;
+//		case WAITING_ORDER:
+//			Message order = getMessage();
+//			if (order!= null) {
+//				if(order instanceof StringMessage) {
+//					if(((StringMessage) order).getContent() == "AGENT_INFOS") {
+//						state = State.SEND_AGENTS_INFO;
+//					}
+//				}
+//			}
+//		break;	
+//		default:
+//			print("error default");
+//		}
 		
 		return StatusFactory.ok(this);
 	}
@@ -110,11 +115,9 @@ public class RoleCollecteur extends Role{
 		this.state = state;
 	}
 
-
 	enum State {
 		SENDING,
 		WAITING_ORDER, 
 		SEND_AGENTS_INFO
 	}
-
 }

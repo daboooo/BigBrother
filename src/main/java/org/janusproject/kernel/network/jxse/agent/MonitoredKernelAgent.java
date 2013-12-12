@@ -8,6 +8,7 @@ import org.ia54Project.organization.OrganizationManager;
 import org.ia54Project.organization.RoleCollecteur;
 import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
+import org.ia54Project.organization.RoleGUIManager;
 import org.ia54Project.organization.RoleManager;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
@@ -24,39 +25,67 @@ import org.janusproject.kernel.status.StatusFactory;
 public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 	private static final long serialVersionUID = 8826290855685530386L;
+	private GroupAddress OrganizationManagerAddress;
+	private GroupAddress OrganizationControllerAddress;
 	
 	MonitoredKernelAgent(AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
+		OrganizationManagerAddress = createGroup(OrganizationManager.class);
+		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
 		
+		launchHeavyAgent(new GUIManagerAgent(),"GUIManagerAgent");
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(new CollecteurAgent(),"CollecteurAgent");
 		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
 	}
 	
+	// ==================== GUI Manager ====================
+
+		private class GUIManagerAgent extends Agent {
+			private static final long serialVersionUID = 2596479307519818391L;
+
+			public Status activate(Object... parameters) {
+				
+				getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
+				
+				if (requestRole(RoleGUIManager.class,OrganizationControllerAddress)==null) {
+					return StatusFactory.ok(this);
+				} 
+				
+				return super.activate(parameters);
+			}
+			
+			@Override
+			public Status live() {
+				print("je prend le role GUIManager");
+				
+				return super.live();
+			}
+		}
+		
 	// ==================== Manager ====================
 
 	private class ManagerAgent extends Agent {
 		private static final long serialVersionUID = 2596479307519818391L;
 
 		public Status activate(Object... parameters) {
-			Status s = null;
-			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-			GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
 			
-			if (requestRole(RoleManager.class,gaddr)==null) {
-				s = StatusFactory.ok(this);
+			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
+			
+			if (requestRole(RoleManager.class,OrganizationManagerAddress)==null) {
+				return StatusFactory.ok(this);
 			} 
-			GroupAddress gaddrController = getOrCreateGroup(OrganizationController.class);
-			if(requestRole(RoleControlManager.class,gaddrController) == null) {
-				s =  StatusFactory.ok(this);
-				return s;
+			
+			if (requestRole(RoleControlManager.class,OrganizationControllerAddress) == null) {
+				return StatusFactory.ok(this);
 			}
+			
 			return super.activate(parameters);
 		}
 		
 		@Override
 		public Status live() {
-			//print("je prend le role Manager");
+			print("je prend le role Manager");
 			
 			return super.live();
 		}
@@ -69,9 +98,8 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 			public Status activate(Object... parameters) {
 				getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-				GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
 				
-				if (requestRole(RoleExecutant.class,gaddr)==null) {
+				if (requestRole(RoleExecutant.class,OrganizationManagerAddress)==null) {
 					return StatusFactory.ok(this);
 				}
 				
@@ -80,7 +108,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			
 			@Override
 			public Status live() {
-				//print("je prend le role Executant");
+				print("je prend le role Executant");
 				
 				return super.live();
 			}
@@ -95,9 +123,8 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		@Override
 		public Status activate(Object... parameters) {
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-			GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
 			
-			if (requestRole(RoleCollecteur.class,gaddr)==null) {
+			if (requestRole(RoleCollecteur.class,OrganizationManagerAddress)==null) {
 				return StatusFactory.ok(this);
 			}
 			
@@ -106,7 +133,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		
 		@Override
 		public Status live() {
-			//print("je prend le role Collecteur");
+			print("je prend le role Collecteur");
 			
 			return super.live();
 		}	
