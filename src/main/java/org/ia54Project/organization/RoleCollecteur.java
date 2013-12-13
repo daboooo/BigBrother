@@ -14,12 +14,14 @@ import org.janusproject.kernel.crio.core.RoleAddress;
 import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.message.StringMessage;
 import org.janusproject.kernel.repository.Repository;
+import org.janusproject.kernel.repository.RepositoryChangeEvent;
+import org.janusproject.kernel.repository.RepositoryChangeListener;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
 import org.janusproject.kernel.util.sizediterator.SizedIterator;
 
 
-public class RoleCollecteur extends Role{
+public class RoleCollecteur extends Role implements RepositoryChangeListener{
 
 	private State state;
 	private int nbMessageToSend = 5;
@@ -35,8 +37,8 @@ public class RoleCollecteur extends Role{
 	
 	@Override
 	public Status live() {
-		Message message = new StringMessage("Bonjour Manager");
-		print("Je suis dans le role collecteur et j'envoie : " + message.toString());
+		Message message = new StringMessage("Bonjour GUI");
+		//print("Je suis dans le role collecteur et j'envoie : " + message.toString());
 		broadcastMessage(RoleManager.class, message);
 		
 //		switch (state) {
@@ -119,5 +121,9 @@ public class RoleCollecteur extends Role{
 		SENDING,
 		WAITING_ORDER, 
 		SEND_AGENTS_INFO
+	}
+
+	public void repositoryChanged(RepositoryChangeEvent evt) {
+		print("Les changements sont : " + evt.getType());
 	}
 }

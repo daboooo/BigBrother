@@ -1,6 +1,8 @@
 package org.ia54Project.organization;
 
 import org.ia54Project.organization.RoleCollecteur.State;
+import org.janusproject.kernel.agentsignal.Signal;
+import org.janusproject.kernel.agentsignal.SignalPolicy;
 import org.janusproject.kernel.crio.core.HasAllRequiredCapacitiesCondition;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.message.Message;
@@ -25,19 +27,21 @@ public class RoleManager  extends Role{
 	public Status activate(Object... parameters) {
 		this.setState(State.RECEIVING); 
 		addObtainCondition(new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
+		getSignalManager().setPolicy(SignalPolicy.FIRE_SIGNAL);
+		
 		return StatusFactory.ok(this);
 	}
 	
 	@Override
 	public Status live() {
-		
-		
-		
 		Message m = getMessage();
-		print("je suis dans le Role Manager et je recoit : " + m);
+		//print("je suis dans le Role Manager et je recoit : " + m);
 		
-		print("Je suis dans le role manager et j'écris dans la mémoire : " + m);
+		//print("Je suis dans le role manager et j'écris dans la mémoire : " + m);
 		putMemorizedData("MY_DATA", m);
+		
+		Signal signal = new Signal(this, "MY_SIGNAL", m);
+		getSignalManager().fireSignal(signal);
 		
 //		Message m = getMessage();
 //		if( m != null) {
