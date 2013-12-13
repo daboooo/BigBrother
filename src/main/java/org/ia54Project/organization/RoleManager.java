@@ -1,6 +1,5 @@
 package org.ia54Project.organization;
 
-import org.ia54Project.organization.RoleCollecteur.State;
 import org.janusproject.kernel.crio.core.HasAllRequiredCapacitiesCondition;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.message.Message;
@@ -35,9 +34,11 @@ public class RoleManager  extends Role{
 		if( m != null) {
 			print("MailboxSize: " + getMailboxSize());
 			print(m);
+
+			
 			if( m instanceof StringMessage) {
 				if(((StringMessage) m).getContent() == "over") {
-					this.broadcastMessage(RoleCollecteur.class, new StringMessage("AGENT_INFOS"));
+					this.broadcastMessage(RoleCollecteur.class, new StringMessage("AGENT_INFOSS"));
 				}
 			}
 		}

@@ -2,6 +2,7 @@ package org.janusproject.kernel.network.jxse.agent;
 
 import java.util.EventListener;
 
+import org.ia54Project.agent.BigBrotherGUIAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
 import org.ia54Project.organization.OrganizationController;
 import org.ia54Project.organization.OrganizationManager;
@@ -9,6 +10,7 @@ import org.ia54Project.organization.RoleCollecteur;
 import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
 import org.ia54Project.organization.RoleManager;
+import org.ia54Project.swingGUI.BigBrotherFrame;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;
@@ -24,15 +26,41 @@ import org.janusproject.kernel.status.StatusFactory;
 public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 	private static final long serialVersionUID = 8826290855685530386L;
+	private Boolean guiEnabled = false;	
 	
-	MonitoredKernelAgent(AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
+	public Boolean getGuiEnabled() {
+		return guiEnabled;
+	}
+
+	public void setGuiEnabled(Boolean guiEnabled) {
+		this.guiEnabled = guiEnabled;
+	}
+
+	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
-		
+		this.guiEnabled = guiEnabled;
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(new CollecteurAgent(),"CollecteurAgent");
 		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
+
+		if(this.guiEnabled) {
+			getOrCreateGroup(OrganizationController.class);
+			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
+			GroupAddress gadr = getExistingGroup(OrganizationController.class);
+			print("GROUPADDR: " + gadr +"--- GUI " + gui);
+			BigBrotherFrame frame = new BigBrotherFrame(gui,gadr);
+			frame.setVisible(true);
+		}
+
 	}
+
+	@Override
+	public Status activate(Object... parameters) {
+		super.activate(parameters);
+
 	
+		return 	StatusFactory.ok(this);
+	}
 	// ==================== Manager ====================
 
 	private class ManagerAgent extends Agent {
@@ -42,17 +70,20 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			Status s = null;
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
 			GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
-			
 			if (requestRole(RoleManager.class,gaddr)==null) {
-				s = StatusFactory.ok(this);
+				throw new IllegalArgumentException("RoleManager");
 			} 
+			
 			GroupAddress gaddrController = getOrCreateGroup(OrganizationController.class);
+			print("controller group:" + gaddrController);
 			if(requestRole(RoleControlManager.class,gaddrController) == null) {
-				s =  StatusFactory.ok(this);
-				return s;
+				throw new IllegalArgumentException("RoleControlManager");
+			}else {
+				print("got role controller" );
 			}
 			return super.activate(parameters);
 		}
+		
 		
 		@Override
 		public Status live() {
@@ -129,4 +160,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 	      call.setOutputValues(result);
 	    }
 	}
+	
+	
 }
