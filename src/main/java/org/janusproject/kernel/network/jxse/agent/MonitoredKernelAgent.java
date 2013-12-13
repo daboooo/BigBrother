@@ -9,6 +9,7 @@ import org.ia54Project.organization.OrganizationManager;
 import org.ia54Project.organization.RoleCollecteur;
 import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
+import org.ia54Project.organization.RoleGUIManager;
 import org.ia54Project.organization.RoleManager;
 import org.ia54Project.swingGUI.BigBrotherFrame;
 import org.janusproject.kernel.address.AgentAddress;
@@ -26,6 +27,8 @@ import org.janusproject.kernel.status.StatusFactory;
 public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 	private static final long serialVersionUID = 8826290855685530386L;
+	private GroupAddress OrganizationManagerAddress;
+	private GroupAddress OrganizationControllerAddress;
 	private Boolean guiEnabled = false;	
 	
 	public Boolean getGuiEnabled() {
@@ -38,7 +41,10 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
+		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		this.guiEnabled = guiEnabled;
+		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
+		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(new CollecteurAgent(),"CollecteurAgent");
 		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
@@ -46,9 +52,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		if(this.guiEnabled) {
 			getOrCreateGroup(OrganizationController.class);
 			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
-			GroupAddress gadr = getExistingGroup(OrganizationController.class);
-			print("GROUPADDR: " + gadr +"--- GUI " + gui);
-			BigBrotherFrame frame = new BigBrotherFrame(gui,gadr);
+			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
 
@@ -67,28 +71,23 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		private static final long serialVersionUID = 2596479307519818391L;
 
 		public Status activate(Object... parameters) {
-			Status s = null;
+			
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-			GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
-			if (requestRole(RoleManager.class,gaddr)==null) {
+			if (requestRole(RoleManager.class,OrganizationManagerAddress)==null) {
 				throw new IllegalArgumentException("RoleManager");
 			} 
 			
-			GroupAddress gaddrController = getOrCreateGroup(OrganizationController.class);
-			print("controller group:" + gaddrController);
-			if(requestRole(RoleControlManager.class,gaddrController) == null) {
+			if (requestRole(RoleControlManager.class,OrganizationControllerAddress) == null) {
 				throw new IllegalArgumentException("RoleControlManager");
-			}else {
-				print("got role controller" );
 			}
+			
 			return super.activate(parameters);
 		}
 		
 		
 		@Override
 		public Status live() {
-			//print("je prend le role Manager");
-			
+			//print("je prend le rôle manager");
 			return super.live();
 		}
 	}
@@ -100,10 +99,9 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 			public Status activate(Object... parameters) {
 				getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-				GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
 				
-				if (requestRole(RoleExecutant.class,gaddr)==null) {
-					return StatusFactory.ok(this);
+				if (requestRole(RoleExecutant.class,OrganizationManagerAddress)==null) {
+					throw new IllegalArgumentException("RoleExecutant");
 				}
 				
 				return super.activate(parameters);
@@ -126,10 +124,9 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		@Override
 		public Status activate(Object... parameters) {
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-			GroupAddress gaddr = getOrCreateGroup(OrganizationManager.class);
 			
-			if (requestRole(RoleCollecteur.class,gaddr)==null) {
-				return StatusFactory.ok(this);
+			if (requestRole(RoleCollecteur.class,OrganizationManagerAddress)==null) {
+				throw new IllegalArgumentException("RoleCollecteur");
 			}
 			
 			return super.activate(parameters);
