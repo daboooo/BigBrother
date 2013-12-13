@@ -1,10 +1,14 @@
 package org.ia54Project.organization;
 
+import org.ia54Project.dataModel.DataModel;
+import org.ia54Project.dataModel.MessageDataModel;
 import org.janusproject.kernel.agentsignal.Signal;
 import org.janusproject.kernel.agentsignal.SignalListener;
 import org.janusproject.kernel.agentsignal.SignalPolicy;
 import org.janusproject.kernel.crio.core.Role;
+import org.janusproject.kernel.crio.core.RoleAddress;
 import org.janusproject.kernel.message.Message;
+import org.janusproject.kernel.message.StringMessage;
 import org.janusproject.kernel.status.Status;
 
 public class RoleControlManager extends Role{
@@ -19,16 +23,25 @@ public class RoleControlManager extends Role{
 	
 	@Override
 	public Status live() {
-		Object message = getMemorizedData("MY_DATA");
-		
-		//print("je suis dans le role controlManager et je lis dans la mémoire : " + message);
-		
-		//print("je suis dans le role controlManager et j'envoie le message : " + message);
-		
-		if(message instanceof Message) {
-			broadcastMessage(RoleGUIManager.class, (Message)message);
+		Message m = getMessage();
+		if(m != null) {
+			print("got message:" + m);
+			print("SENDER ADDRESS: " + m.getSender());
+			RoleAddress guiManager = getRoleAddress(getOrCreateGroup(OrganizationController.class), RoleGUIManager.class, RoleAddress.class.cast(m.getSender()).getPlayer());
+			print("SHOULD BE:  " + guiManager);
+			
+			if(m.getSender() == guiManager) {
+				if(m instanceof StringMessage) {
+					// request of dataModel
+					if(StringMessage.class.cast(m).getContent().equals("request")) {
+						// sending response
+						print("sending RESPONSE");
+						sendMessage(RoleGUIManager.class, new MessageDataModel(new DataModel(null)));
+					}
+				}
+				
+			}
 		}
-		
 		return null;
 	}
 

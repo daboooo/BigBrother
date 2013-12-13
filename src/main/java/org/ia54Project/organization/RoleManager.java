@@ -1,12 +1,10 @@
 package org.ia54Project.organization;
 
-import org.ia54Project.organization.RoleCollecteur.State;
 import org.janusproject.kernel.agentsignal.Signal;
 import org.janusproject.kernel.agentsignal.SignalPolicy;
 import org.janusproject.kernel.crio.core.HasAllRequiredCapacitiesCondition;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.message.Message;
-import org.janusproject.kernel.message.StringMessage;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
 

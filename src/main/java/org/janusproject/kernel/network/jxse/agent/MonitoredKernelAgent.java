@@ -2,14 +2,15 @@ package org.janusproject.kernel.network.jxse.agent;
 
 import java.util.EventListener;
 
+import org.ia54Project.agent.BigBrotherGUIAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
 import org.ia54Project.organization.OrganizationController;
 import org.ia54Project.organization.OrganizationManager;
 import org.ia54Project.organization.RoleCollecteur;
 import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
-import org.ia54Project.organization.RoleGUIManager;
 import org.ia54Project.organization.RoleManager;
+import org.ia54Project.swingGUI.BigBrotherFrame;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;
@@ -27,58 +28,44 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 	private static final long serialVersionUID = 8826290855685530386L;
 	private GroupAddress OrganizationManagerAddress;
 	private GroupAddress OrganizationControllerAddress;
-	private GUIManagerAgent gUIManagerAgent;
-
-	MonitoredKernelAgent(AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
-		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
-		OrganizationManagerAddress = createGroup(OrganizationManager.class);
-		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
-
-
-		gUIManagerAgent = new GUIManagerAgent();
-
-		System.out.println("" + launchHeavyAgent(gUIManagerAgent,"GUIManagerAgent"));
-		/*launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
-		launchHeavyAgent(new CollecteurAgent(),"CollecteurAgent");
-		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
-*/
+	private Boolean guiEnabled = false;	
+	
+	public Boolean getGuiEnabled() {
+		return guiEnabled;
 	}
 
-	
+	public void setGuiEnabled(Boolean guiEnabled) {
+		this.guiEnabled = guiEnabled;
+	}
 
-	@Override
-	public Status live() {
-		if(gUIManagerAgent != null) {
-			//print(gUIManagerAgent.getAddress());
-			kill(gUIManagerAgent.getAddress());
+	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
+		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
+		OrganizationManagerAddress = createGroup(OrganizationManager.class);
+		this.guiEnabled = guiEnabled;
+		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
+		
+		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
+		launchHeavyAgent(new CollecteurAgent(),"CollecteurAgent");
+		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
+
+		if(this.guiEnabled) {
+			getOrCreateGroup(OrganizationController.class);
+			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
+			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
+			frame.setVisible(true);
 		}
-		return super.live();
+
 	}
 
 	// ==================== GUI Manager ====================
 
-	private class GUIManagerAgent extends Agent {
-		private static final long serialVersionUID = 2596479307519818391L;
+	@Override
+	public Status activate(Object... parameters) {
+		super.activate(parameters);
 
-		public Status activate(Object... parameters) {
-
-			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-
-			if (requestRole(RoleGUIManager.class,OrganizationControllerAddress)==null) {
-				return StatusFactory.ok(this);
-			} 
-
-			return super.activate(parameters);
-		}
-
-		@Override
-		public Status live() {
-			//print("je prend le role GUIManager");
-
-			return super.live();
-		}
+	
+		return 	StatusFactory.ok(this);
 	}
-
 	// ==================== Manager ====================
 
 	private class ManagerAgent extends Agent {
@@ -89,11 +76,11 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
 
 			if (requestRole(RoleManager.class,OrganizationManagerAddress)==null) {
-				return StatusFactory.ok(this);
+				throw new IllegalArgumentException("RoleManager");
 			} 
 
 			if (requestRole(RoleControlManager.class,OrganizationControllerAddress) == null) {
-				return StatusFactory.ok(this);
+				throw new IllegalArgumentException("RoleControlManager");
 			}
 
 			return super.activate(parameters);
@@ -114,18 +101,18 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 		public Status activate(Object... parameters) {
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
-
+			
 			if (requestRole(RoleExecutant.class,OrganizationManagerAddress)==null) {
-				return StatusFactory.ok(this);
+				throw new IllegalArgumentException("RoleExecutant");
 			}
-
+			
 			return super.activate(parameters);
 		}
-
+		
 		@Override
 		public Status live() {
 			//print("je prend le role Executant");
-
+			
 			return super.live();
 		}
 	}
@@ -141,7 +128,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
 
 			if (requestRole(RoleCollecteur.class,OrganizationManagerAddress)==null) {
-				return StatusFactory.ok(this);
+				throw new IllegalArgumentException("RoleCollecteur");
 			}
 
 			return super.activate(parameters);
@@ -150,7 +137,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		@Override
 		public Status live() {
 			//print("je prend le role Collecteur");
-
+			
 			return super.live();
 		}	
 	}
