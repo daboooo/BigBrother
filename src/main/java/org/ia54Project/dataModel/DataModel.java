@@ -11,6 +11,7 @@ public class DataModel {
 	private List<BigBrotherListener> _listeners = new ArrayList();
 	private Collection<AgentModel> allAgents;
 	private Collection<RoleModel> allRoles;
+	private Collection<GroupModel> allGroups;
 	private Collection<OrganizationModel> allOrgs;
 	private Collection<KernelModel> allKernels;
 	private Collection<MachineModel> allMachines;
@@ -49,6 +50,7 @@ public class DataModel {
 	private void buildCollection() {
 		allAgents = new Vector<AgentModel> ();
 		allRoles = new Vector<RoleModel> ();
+		allGroups = new Vector<GroupModel> ();
 		allOrgs = new Vector<OrganizationModel> ();
 		allKernels = new Vector<KernelModel> ();
 		allMachines = new Vector<MachineModel> ();
@@ -56,28 +58,34 @@ public class DataModel {
 			return;
 		for (MachineModel machine : content) {
 			allMachines.add(machine);
-			if(machine.getKernelList() == null)
-				return;
-			for (KernelModel kernel : machine.getKernelList()) {
-				allKernels.add(kernel);
-				if(kernel.getLonelyAgentList() == null)
-					return;
-				for(AgentModel lonelyAgent : kernel.getLonelyAgentList()) {
-					allAgents.add(lonelyAgent);
-				}
-				
-				if( kernel.getOrgList() == null)
-					return;
-				for(OrganizationModel org : kernel.getOrgList()) {
-					allOrgs.add(org);
-					if(org.getRoleList() == null)
-						return;
-					for(RoleModel role: org.getRoleList()) {
-						allRoles.add(role);
-						if(role.getPlayerList() == null)
-							return;
-						for(AgentModel agent: role.getPlayerList()) {
-							allAgents.add(agent);
+			if(machine.getKernelList() != null) {
+				for (KernelModel kernel : machine.getKernelList()) {
+					allKernels.add(kernel);
+					if(kernel.getLonelyAgentList() != null) {
+						for(AgentModel lonelyAgent : kernel.getLonelyAgentList()) {
+							allAgents.add(lonelyAgent);
+						}
+						
+						if( kernel.getOrgList() != null) {
+							for(OrganizationModel org : kernel.getOrgList()) {
+								allOrgs.add(org);
+								if(org.getGroupList() != null) {
+									for(GroupModel group: org.getGroupList()) {
+										allGroups.add(group);
+										if(group.getRoleList() != null) {
+											for(RoleModel role: group.getRoleList()) {
+												allRoles.add(role);
+												if(role.getPlayerList() != null) {
+													for(AgentModel agent: role.getPlayerList()) {
+														allAgents.add(agent);
+													}
+												}
+											}
+											
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -103,6 +111,13 @@ public class DataModel {
 		return allRoles;
 	}
 
+	public Collection<GroupModel> getAllGroups() {
+		return allGroups;
+	}
+	public void setAllGroups(Collection<GroupModel> allGroups) {
+		this.allGroups = allGroups;
+	}
+
 	public Collection<OrganizationModel> getAllOrgs() {
 		return allOrgs;
 	}
@@ -115,6 +130,7 @@ public class DataModel {
 		return allMachines;
 	}
 
+	
 
 
 }

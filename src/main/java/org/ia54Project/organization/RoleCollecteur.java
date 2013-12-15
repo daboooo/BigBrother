@@ -1,123 +1,301 @@
 package org.ia54Project.organization;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Vector;
 
+import org.ia54Project.dataModel.AgentModel;
+import org.ia54Project.dataModel.GroupModel;
+import org.ia54Project.dataModel.KernelModel;
+import org.ia54Project.dataModel.OrganizationModel;
+import org.ia54Project.dataModel.RoleModel;
+import org.janusproject.kernel.KernelEvent;
+import org.janusproject.kernel.KernelListener;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
-import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.HasAllRequiredCapacitiesCondition;
+import org.janusproject.kernel.crio.core.Organization;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.crio.core.RoleAddress;
-import org.janusproject.kernel.message.Message;
-import org.janusproject.kernel.message.StringMessage;
+import org.janusproject.kernel.crio.organization.Group;
+import org.janusproject.kernel.crio.organization.GroupEvent;
+import org.janusproject.kernel.crio.organization.GroupListener;
+import org.janusproject.kernel.crio.role.RolePlayingEvent;
+import org.janusproject.kernel.crio.role.RolePlayingListener;
 import org.janusproject.kernel.repository.Repository;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
-import org.janusproject.kernel.util.sizediterator.SizedIterator;
 
-
-public class RoleCollecteur extends Role{
-
-	private State state;
-	private int nbMessageToSend = 5;
-	private int sentMsg = 0;
+//, KernelListener
+public class RoleCollecteur extends Role implements KernelListener, RolePlayingListener, GroupListener {
+	
+	private KernelModel kernelModel = new KernelModel();
 	
 	@Override
-	public Status activate(Object... parameters) {
-		this.setState(State.SEND_AGENTS_INFO); 	
+	public Status activate(Object... parameters) {	
 		addObtainCondition(new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
-
+		
 		return StatusFactory.ok(this);
 	}
-	
+	 
 	@Override
 	public Status live() {
-		Message message = new StringMessage("Bonjour Manager");
-		//print("Je suis dans le role collecteur et j'envoie : " + message.toString());
-		broadcastMessage(RoleManager.class, message);
-		
-//		switch (state) {
-//		case SEND_AGENTS_INFO:
-//			CapacityContext cc = null;
-//			
-//			try {
-//				cc = executeCapacityCall(CapacityGetAgentRepository.class);
-//			} catch (Exception e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			if(cc!=null && cc.isResultAvailable()) {
-//				Object res = cc.getOutputValueAt(0);
-//				
-//				if(res instanceof Repository<?, ?>) {
-//					Repository<AgentAddress, Agent> repo = (Repository<AgentAddress, Agent>) res;
-//					Collection<AgentAddress> addr = repo.identifiers();
-//					
-//					print ("Size agents: " + addr.size());
-//					
-//					for (AgentAddress ad : addr) {
-//						broadcastMessage(RoleManager.class, buildMessage(repo.get(ad)));
-//					}
-//					
-//					broadcastMessage(RoleManager.class, new StringMessage("over"));
-//					state = State.WAITING_ORDER;
-//				}
-//			}
-//			break;
-//		case WAITING_ORDER:
-//			Message order = getMessage();
-//			if (order!= null) {
-//				if(order instanceof StringMessage) {
-//					if(((StringMessage) order).getContent() == "AGENT_INFOS") {
-//						state = State.SEND_AGENTS_INFO;
+//		if(kernelModel.getOrgList() != null) {
+//			for (OrganizationModel organizationModel : kernelModel.getOrgList()) {
+//				print(organizationModel.getClasse());
+//				if(organizationModel.getGroupList() != null) {
+//					for (GroupModel groupModel : organizationModel.getGroupList()) {
+//						print("GROUUUUUUUUUUUUUUUP" + groupModel.getGroupAddress());
 //					}
 //				}
 //			}
-//		break;	
-//		default:
-//			print("error default");
 //		}
-		
-		return StatusFactory.ok(this);
+		return null;
 	}
 	
-	private StringMessage buildMessage(Agent ag) {
-		StringBuilder msg = new StringBuilder();
-		msg.append("\n-----\nName: ");
-		msg.append(ag.getName());
-		msg.append("\nAdress: ");
-		msg.append(ag.getAddress().toString());
-//		msg.append("\nOrganization: ");
-//		msg.append(ag.getOrganization(null).toString());
-		msg.append("\nState: ");
-		msg.append(ag.getState().toString());
-		msg.append("\nList of groups: [ ");
-		for (GroupAddress gadr : ag.getGroups()) {
-			msg.append(gadr);
-			msg.append(ag.getRoles(gadr));
-			msg.append(" - ");
+	// -------------------- Agents --------------------
+	
+	// ---------- Listeners ----------
+	
+	public void agentLaunched(KernelEvent event) {
+		AgentAddress agentAddress = event.getAgent();
+		CapacityContext cc = null;
+		
+		try {
+			cc = executeCapacityCall(CapacityGetAgentRepository.class);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		msg.append(" ]");
-		msg.append("\n-----");
-		StringMessage m = new StringMessage(msg.toString());
-		return m;
+		
+		if(cc!=null && cc.isResultAvailable()) {
+			Object res = cc.getOutputValueAt(0);
+			
+			if(res instanceof Repository<?, ?>) {
+				Agent agent = ((Repository<AgentAddress, ? extends Agent>)res).get(agentAddress);
+				AgentModel agentModel = new AgentModel(agent);
+				kernelModel.getLonelyAgentList().add(agentModel);
+			}
+		}
 	}
 
-	public State getState() {
-		return state;
+	public void agentKilled(KernelEvent event) {
+		AgentAddress agentAddress = event.getAgent();
+		remove(agentAddress);
 	}
 
-	public void setState(State state) {
-		this.state = state;
+	public boolean exceptionUncatched(Throwable error) {
+		return false;
 	}
 
-	enum State {
-		SENDING,
-		WAITING_ORDER, 
-		SEND_AGENTS_INFO
+	public void kernelAgentLaunched(KernelEvent event) {
+	}
+
+	public void kernelAgentKilled(KernelEvent event) {
+		// TODO Auto-generated method stub
+	}
+	
+	// ---------- Methods ----------
+	
+	/**
+	 * 
+	 * @param agentAddress
+	 */
+	private void remove(AgentAddress agentAddress) {
+		Collection<AgentModel> agentModels = kernelModel.getLonelyAgentList();
+		for (AgentModel agentModel : agentModels) {
+			if(agentModel.getAddress() == agentAddress) {
+				agentModels.remove(agentModel);
+				return;
+			}
+		}
+	}
+	
+	// -------------------- Roles --------------------
+	
+	// ---------- Listeners ----------
+
+	public void roleTaken(RolePlayingEvent event) {
+		AgentAddress agentAddress = event.getPlayer();
+		RoleAddress roleAddress = event.getRoleAddress();
+		Class<? extends Role> roleClass = event.getRole();
+		Group group = event.getGroup();
+		Organization organization = group.getOrganization();
+		
+		insert(agentAddress, roleAddress, roleClass, group, organization);
+	}
+	
+	public void roleReleased(RolePlayingEvent event) {
+		AgentAddress agentAddress = event.getPlayer();
+		RoleAddress roleAddress = event.getRoleAddress();
+		Group group = event.getGroup();
+		Organization organization = group.getOrganization();
+		
+		remove(agentAddress, roleAddress, group, organization);
+	}
+	
+	// ---------- Methods ----------
+	
+	/**
+	 * 
+	 * @param agentAddress
+	 * @param roleAddress
+	 * @param group
+	 * @param organization
+	 */
+	private void insert(AgentAddress agentAddress, RoleAddress roleAddress, Class<? extends Role> roleClass, Group group, Organization organization) {
+		Collection<AgentModel> agentModels = kernelModel.getLonelyAgentList();
+		AgentModel goodAgentModel = new AgentModel();
+		for (AgentModel agentModel : agentModels) {
+			if(agentModel.getAddress() == agentAddress) {
+				goodAgentModel = agentModel;
+				agentModels.remove(agentModel);
+			}
+		}
+		
+		boolean roleModelExist = false;
+		Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+		for (OrganizationModel organizationModel : organizationModels) {
+			if (organizationModel.getClasse() == organization.getClass()) {
+				Vector<GroupModel> groupModels = organizationModel.getGroupList();
+				for (GroupModel groupModel : groupModels) {
+					if (groupModel.getGroupAddress() == group.getAddress()) {
+						Vector<RoleModel> roleModels = groupModel.getRoleList();
+						for (RoleModel roleModel : roleModels) {
+							if (roleModel.getRoleAddress() == roleAddress) {
+								goodAgentModel.getListOfRole().add(roleModel.toString());
+								roleModel.getPlayerList().add(goodAgentModel);
+								roleModelExist = true;
+								return;
+							}
+						}
+						if(!roleModelExist) {
+							RoleModel roleModel = new RoleModel(roleAddress, roleClass, goodAgentModel);
+							goodAgentModel.getListOfRole().add(roleModel.toString());
+							roleModels.add(roleModel);
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @param agentAddress
+	 * @param roleAddress
+	 * @param group
+	 * @param organization
+	 */
+	private void remove(AgentAddress agentAddress, RoleAddress roleAddress, Group group, Organization organization) {
+		Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+		for (OrganizationModel organizationModel : organizationModels) {
+			if (organizationModel.getClasse() == organization.getClass()) {
+				Vector<GroupModel> groupModels = organizationModel.getGroupList();
+				for (GroupModel groupModel : groupModels) {
+					if (groupModel.getGroupAddress() == group.getAddress()) {
+						Vector<RoleModel> roleModels = groupModel.getRoleList();
+						for (RoleModel roleModel : roleModels) {
+							if (roleModel.getRoleAddress() == roleAddress) {
+								Vector<AgentModel> agentModels = (Vector<AgentModel>) roleModel.getPlayerList();
+								for (AgentModel agentModel : agentModels) {
+									if(agentModel.getAddress() == agentAddress) {
+										agentModel.removeRoleFromList(roleModel);
+										if(agentModel.getListOfRole().size() == 0) {
+											kernelModel.getLonelyAgentList().add(agentModel);
+										}
+										agentModels.remove(agentModel);
+										if(agentModels.size() == 0) {
+											roleModels.remove(roleModel);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// -------------------- Groups --------------------
+	
+	// ---------- Listeners ----------
+	
+	public void groupCreated(GroupEvent event) {
+		Group group = event.getGroup();
+		GroupModel groupModel = new GroupModel();
+		groupModel.setRoleList(new Vector<RoleModel>());
+		groupModel.setGroupAddress(group.getAddress());
+		
+		Organization organization = group.getOrganization();
+		
+		insert(groupModel, organization);
+	}
+
+	public void groupDestroyed(GroupEvent event) {
+		Group group = event.getGroup();
+		GroupAddress groupAddress = group.getAddress();
+		Organization organization = group.getOrganization();
+		
+		remove(groupAddress, organization);
+		
+	}
+	
+	// ---------- Methods ----------
+	
+	/**
+	 * 
+	 * @param groupModel
+	 * @param organization
+	 */
+	private void insert(GroupModel groupModel, Organization organization) {
+		Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+		boolean organizationModelExist = false;
+		
+		if(organizationModels != null) {
+			for (OrganizationModel organizationModel : organizationModels) {
+				if (organizationModel.getClasse() == organization.getClass()) {
+					organizationModel.getGroupList().add(groupModel);
+					organizationModelExist = true;
+				}
+			}
+		}
+		else {
+			organizationModels = new Vector<OrganizationModel>();
+			kernelModel.setOrgList(organizationModels);
+		}
+		
+		if (organizationModelExist == false) {
+			OrganizationModel newOrganizationModel = new OrganizationModel(organization, groupModel);
+			kernelModel.getOrgList().add(newOrganizationModel);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param groupAddress
+	 * @param organization
+	 */
+	private void remove(GroupAddress groupAddress, Organization organization) {
+		Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+		
+		if(organizationModels != null) {
+			for (OrganizationModel organizationModel : organizationModels) {
+				if (organizationModel.getClasse() == organization.getClass()) {
+					Collection<GroupModel> groupModels = organizationModel.getGroupList();
+					for (GroupModel groupModel : groupModels) {
+						if(groupModel.getGroupAddress() == groupAddress) {
+							groupModels.remove(groupModel);
+							if(groupModels.size() == 0) {
+								organizationModels.remove(organizationModel);
+							}
+							return;
+						}
+					}
+				}
+			}
+		}
 	}
 }

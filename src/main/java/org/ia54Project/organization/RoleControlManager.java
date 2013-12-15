@@ -8,12 +8,17 @@ import java.util.Vector;
 import org.ia54Project.BigBrotherUtil;
 import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.dataModel.DataModel;
+import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageDataModel;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.ia54Project.dataModel.RoleModel;
+import org.janusproject.kernel.agentsignal.Signal;
+import org.janusproject.kernel.agentsignal.SignalListener;
 import org.janusproject.kernel.agent.Kernels;
+import org.janusproject.kernel.crio.core.Role;
+import org.janusproject.kernel.agentsignal.SignalPolicy;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.crio.core.RoleAddress;
 import org.janusproject.kernel.message.Message;
@@ -22,7 +27,15 @@ import org.janusproject.kernel.status.Status;
 
 public class RoleControlManager extends Role{
 	private Integer nbSend = 0;
+	private final SignalListener signalListener = new MySignalListener();
 
+	public Status activate(Object... parameters) {
+	   getSignalManager().setPolicy(SignalPolicy.FIRE_SIGNAL);
+	   addSignalListener(signalListener);
+	   
+	   return null;
+	}
+	
 	@Override
 	public Status live() {
 		Message m = getMessage();
@@ -87,26 +100,32 @@ public class RoleControlManager extends Role{
 		//fake role coll
 		Vector<RoleModel> roleList = new Vector<RoleModel>();
 			//fake role
-			RoleModel faker = new RoleModel(getClass().toString());
+			RoleModel faker = new RoleModel(getClass());
 			faker.setRoleAddress(getAddress());
-			faker.setBox(getMailbox());
 			faker.setGroupAdress(getGroupAddress());
 			faker.setHasMesage(hasMessage());
 			faker.setIsReleased(isReleased());
 			faker.setIsSleeping(isSleeping());	
 			faker.setPlayerList(agentList);
 			
-			RoleModel faker2 = new RoleModel("Role controller");
+			RoleModel faker2 = new RoleModel(RoleCollecteur.class);
 			
 			roleList.add(faker);
 			roleList.add(faker2);
 				
+		//fake groupModel
+		Vector<GroupModel> groupList = new Vector<GroupModel>();
+			GroupModel group = new GroupModel();
+			group.setGroupAddress(getGroupAddress());
+			group.setRoleList(roleList);
+			groupList.add(group);
 			
 		//fake org coll
 			Vector<OrganizationModel> orgList = new Vector<OrganizationModel>();
 			//fake org
-			OrganizationModel fakeo = new OrganizationModel("Organization");
-			fakeo.setRoleList(roleList);
+			OrganizationModel fakeo = new OrganizationModel(OrganizationController.class);
+			fakeo.setGroupList(groupList);
+			fakeo.setNbInstance(1);
 			orgList.add(fakeo);
 			
 		
@@ -134,4 +153,10 @@ public class RoleControlManager extends Role{
 		return datam;
 	}
 
+	private class MySignalListener implements SignalListener {
+		public void onSignal(Signal signal) {
+			//print("je suis dans le role controlManager et je reçoit le signal : "+ signal.getValueAt(0));
+			
+		}
+	}
 }

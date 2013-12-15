@@ -6,10 +6,10 @@ import java.util.Collection;
 import org.janusproject.kernel.address.AgentAddress;
 
 public class KernelModel {
-	String name;
-	AgentAddress kernelAddress;
-	Collection<OrganizationModel> orgList;
-	Collection<AgentModel> lonelyAgentList;
+	private String name;
+	private AgentAddress kernelAddress;
+	private Collection<OrganizationModel> orgList;
+	private Collection<AgentModel> lonelyAgentList;
 	
 	public Collection<OrganizationModel> getOrgList() {
 		return orgList;

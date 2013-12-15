@@ -1,39 +1,36 @@
 package org.ia54Project.dataModel;
 
-import java.util.Collection;
+import java.util.Vector;
 
-import org.janusproject.kernel.crio.core.GroupAddress;
+import org.janusproject.kernel.crio.core.Organization;
 
 public class OrganizationModel {
-	String name;
-	Collection<GroupAddress> groupAdresses; // getGroupAddresses()
-	Integer nbInstance; //getGroupCount()
-	
-	Collection<RoleModel> roleList;
-	
+	private Class<? extends Organization> classe;
+	private Integer nbInstance;
+	private Vector<GroupModel> groupList;
 
 	public OrganizationModel() {
 		
 	}
 
-	public OrganizationModel(String name) {
-		setName(name);
-	}
-	
-	public String getName() {
-		return name;
+	public OrganizationModel(Class<? extends Organization> classe) {
+		setClasse(classe);
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public OrganizationModel(Organization organization, GroupModel groupModel) {
+		groupList = new Vector<GroupModel>();
+		groupList.add(groupModel);
+		
+		classe = organization.getClass();
+		nbInstance = organization.getGroupCount();
 	}
 
-	public Collection<GroupAddress> getGroupAdresses() {
-		return groupAdresses;
+	public Class<? extends Organization> getClasse() {
+		return classe;
 	}
 
-	public void setGroupAdresses(Collection<GroupAddress> groupAdresses) {
-		this.groupAdresses = groupAdresses;
+	public void setClasse(Class<? extends Organization> classe) {
+		this.classe = classe;
 	}
 
 	public Integer getNbInstance() {
@@ -44,17 +41,17 @@ public class OrganizationModel {
 		this.nbInstance = nbInstance;
 	}
 
-	public Collection<RoleModel> getRoleList() {
-		return roleList;
+	public Vector<GroupModel> getGroupList() {
+		return groupList;
 	}
 	
-	public void setRoleList(Collection<RoleModel> roleList) {
-		this.roleList = roleList;
+	public void setGroupList(Vector<GroupModel> groupList) {
+		this.groupList = groupList;
 	}
 	
 	@Override
 	public String toString() {
-		return getName();
+		return getClasse().toString();
 	}
 
 }

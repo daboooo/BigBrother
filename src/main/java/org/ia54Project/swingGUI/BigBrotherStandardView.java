@@ -24,6 +24,7 @@ import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.dataModel.BigBrotherDataChangeEvent;
 import org.ia54Project.dataModel.BigBrotherListener;
 import org.ia54Project.dataModel.DataModel;
+import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.OrganizationModel;
@@ -73,7 +74,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	public void initLeftPane(DataModel data) {
 		leftScroll = new JScrollPane();
 		leftPane = leftScroll.getViewport();
-		leftPane.setMinimumSize(minimumSize);
+		//leftPane.setMinimumSize(minimumSize);
 		//Create a tree that allows one treeSelection at a time.
 		tree = new JTree(buildTree());
 		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -86,9 +87,8 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	public void initRightPane() {
 		rightScroll = new JScrollPane();
 		rightPane = rightScroll.getViewport();
-//		detailView = new AgentView(tree,data);
+		//rightPane.setMinimumSize(minimumSize);
 		rightPane.add(detailView);
-		rightPane.setMinimumSize(minimumSize);
 		this.setRightComponent(rightScroll);
 	}
 
@@ -99,6 +99,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 			for (MachineModel machineModel : vmm) {
 				DefaultMutableTreeNode machineNode = new DefaultMutableTreeNode(machineModel);
 				root.add(machineNode);
+				System.out.println("TREEE");
 				TreeUtil.buildKernelModelNode(machineNode, machineModel);
 			}
 		}
@@ -187,7 +188,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 				if(allOrgs != null) {
 					
 					for (OrganizationModel organizationModel : allOrgs) {
-						if(treeSelectionAddress.equals(organizationModel.getName())) {
+						if(treeSelectionAddress.equals(organizationModel.toString())) {
 							((BigBrotherOrganizationView) detailView).setModel(organizationModel);
 							return;
 						}
@@ -195,7 +196,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 				}
 				
 			} else if(treeSelectionAddress instanceof GroupAddress) {
-				Collection<GroupAddress> allGroups = data.getAllGroups();
+				Collection<GroupModel> allGroups = data.getAllGroups();
 				if(allGroups != null) {
 					System.out.println(" !  ALL GROUP : " + allGroups);
 					for (GroupModel groupModel : allGroups) {
@@ -221,6 +222,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 				} else {
 					removeDetailViewIfExists();
 					detailView = new BigBrotherAgentView(AgentModel.class.cast(treeSelection));
+					//rightPane.setView(detailView);
 					rightPane.add(detailView);
 					this.setVisible(true);
 				}
@@ -269,7 +271,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					System.out.println("updt HOSTS");
 					this.setVisible(true);
 				}
-				treeSelectionAddress = ((OrganizationModel) treeSelection).getName();
+				treeSelectionAddress = ((OrganizationModel) treeSelection).toString();
 			} else if (treeSelection instanceof GroupModel){
 				if(detailView instanceof BigBrotherGroupView) {
 					BigBrotherGroupView.class.cast(detailView).setModel((GroupModel) treeSelection);

@@ -144,7 +144,6 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 		case WAITING_RESPONSE:
 			response = getMessage();
 			if(response != null) {
-				RoleAddress controlManager = getRoleAddress(getOrCreateGroup(OrganizationManager.class), RoleControlManager.class, RoleAddress.class.cast(response.getSender()).getPlayer());
 				if(response instanceof MessageDataModel) {
 					// we got a response
 					print("got response");

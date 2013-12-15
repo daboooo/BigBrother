@@ -4,33 +4,40 @@ import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 
+import org.ia54Project.dataModel.GroupModel;
+
 public class BigBrotherGroupView extends BigBrotherDetailView{
 	private static final long serialVersionUID = -396700965229827736L;
 
 	// TODO
-	private final static JLabel name_desc = new JLabel("Instance of organization :");
 	private final static JLabel address_desc = new JLabel("Group Address: ");
 	
-	private JLabel name;
 	private JLabel address;
+
+	private final String[] listDataDesc;
+	private String[] listDataInfo;
+	
 	
 	public BigBrotherGroupView(GroupModel group) {
-		name = new JLabel();
-		address = new JLabel();
+//		address = new JLabel();
+//		
+//		setLayout(new GridLayout(1,1));
+//		add(address_desc);
+//		add(address);
+		listDataDesc = new String[1];
+		listDataDesc[0] = "Group Address: ";
 		
-		setLayout(new GridLayout(1,1));
-		add(name_desc);
-		add(name);
-		add(address_desc);
-		add(address);
-		
+		listDataInfo = new String[1];
+		listDataInfo[0] = "";
+		desc.setListData(listDataDesc);
+		info.setListData(listDataInfo);
 		setModel(group);
 		setVisible(true);
 	}
 	
 	public void setModel(GroupModel group) {
-		name.setText(group.getName());
-		address.setText(group.getGroupAddress().toString());
-		
+		//address.setText(group.getGroupAddress().toString());
+		listDataInfo[0] = group.getGroupAddress().toString();
+		info.setListData(listDataInfo);
 	}
 }

@@ -7,6 +7,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.ia54Project.dataModel.AgentModel;
+import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.OrganizationModel;
@@ -33,7 +34,7 @@ public class TreeUtil {
 			for(OrganizationModel orgModel : orgs) {
 				DefaultMutableTreeNode orgNode = new DefaultMutableTreeNode(orgModel);
 				kernelNode.add(orgNode);
-				buildRoleModelNode(orgNode, orgModel);
+				buildGroupNode(orgNode, orgModel);
 			}
 		}
 	}
@@ -49,8 +50,19 @@ public class TreeUtil {
 		}
 	}
 
-	public static void buildRoleModelNode(DefaultMutableTreeNode orgNode, OrganizationModel orgModel) {
-		Collection<RoleModel> roles = orgModel.getRoleList();
+	public static void buildGroupNode(DefaultMutableTreeNode orgNode, OrganizationModel orgModel) {
+		Collection<GroupModel> groups = orgModel.getGroupList();
+		if(groups != null) {
+			for (GroupModel groupModel : groups) {
+				DefaultMutableTreeNode groupNode = new DefaultMutableTreeNode(groupModel);
+				orgNode.add(groupNode);
+				buildRoleModelNode(groupNode, groupModel);
+			}
+		}
+	}
+	
+	public static void buildRoleModelNode(DefaultMutableTreeNode orgNode, GroupModel groupModel) {
+		Collection<RoleModel> roles = groupModel.getRoleList();
 		if(roles != null) {
 			for (RoleModel roleModel : roles) {
 				DefaultMutableTreeNode roleNode = new DefaultMutableTreeNode(roleModel);

@@ -3,6 +3,7 @@ package org.ia54Project.dataModel;
 import java.util.Vector;
 
 import org.janusproject.kernel.address.AgentAddress;
+import org.janusproject.kernel.agent.Agent;
 
 public class AgentModel {
 	// add container for all required agent info
@@ -33,6 +34,20 @@ public class AgentModel {
 		setAddress(adr);
 	}
 	
+	public AgentModel(Agent agent) {
+		name = agent.getName();
+		address = agent.getAddress();
+		creationDate = agent.getCreationDate();
+		creatorAddress = agent.getCreator();
+		isHeavyAgent = agent.isHeavyAgent();
+		isAlive = agent.isAlive();
+		isCompound = agent.isCompound();
+		isRecruitementAllowed = agent.isRecruitmentAllowed();
+		isSleeping = agent.isSleeping();
+		canCommitSuicide = agent.canCommitSuicide();
+		listOfRole = new Vector<String>();
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -120,18 +135,21 @@ public class AgentModel {
 	public void setListOfRole(Vector<String> listOfRole) {
 		this.listOfRole = listOfRole;
 	}
+
+	public void removeRoleFromList(RoleModel roleModel) {
+		String roleClass = roleModel.getClasse().toString();
+		Vector<String> getListOfRoles = this.getListOfRole();
+		for (String roleString : getListOfRoles) {
+			if(roleClass == roleString) {
+				getListOfRoles.remove(roleString);
+			}
+		}
+		
+	}
 	
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getName();
 	}
-//	getRoles()
-//	--isAlive()
-//	isCompound()
-//	isPlayingRole()
-//	isRecruitmentAllowed()
-//	isSleeping()
-//	canCommitSuicide()
-//	getCredentials()
 }

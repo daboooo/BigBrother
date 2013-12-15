@@ -1,38 +1,43 @@
 package org.ia54Project.dataModel;
 
 import java.util.Collection;
+import java.util.Vector;
 
 import org.janusproject.kernel.crio.core.GroupAddress;
+import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.crio.core.RoleAddress;
-import org.janusproject.kernel.mailbox.Mailbox;
 
 public class RoleModel {
-	String name;
+	Class<? extends Role> classe;
 	RoleAddress roleAddress;
 	GroupAddress groupAdress;
-	Mailbox box;
 	Boolean hasMesage;
 	Boolean isReleased;
 	Boolean isSleeping;
 	Collection<AgentModel> playerList;
 	
-	
 	public RoleModel() {
 		
 	}
 	
-	public RoleModel(String name) {
-		setName(name);
+	public RoleModel(Class<? extends Role> classe) {
+		setClasse(classe);
 	}
 	
-	public String getName() {
-		return name;
+	public RoleModel(RoleAddress roleAddress, Class<? extends Role> roleClass, AgentModel agentModel) {
+		setRoleAddress(roleAddress);
+		playerList = new Vector<AgentModel>();
+		playerList.add(agentModel);
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public Class<? extends Role> getClasse() {
+		return classe;
 	}
-	
+
+	public void setClasse(Class<? extends Role> classe) {
+		this.classe = classe;
+	}
+
 	public RoleAddress getRoleAddress() {
 		return roleAddress;
 	}
@@ -44,12 +49,6 @@ public class RoleModel {
 	}
 	public void setGroupAdress(GroupAddress groupAdress) {
 		this.groupAdress = groupAdress;
-	}
-	public Mailbox getBox() {
-		return box;
-	}
-	public void setBox(Mailbox box) {
-		this.box = box;
 	}
 	public Collection<AgentModel> getPlayerList() {
 		return playerList;
@@ -79,9 +78,7 @@ public class RoleModel {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return getName();
+		return getClasse().toString();
 	}
-//	getLeaveConditions()
-//	getObtainConditions()
-
+	
 }
