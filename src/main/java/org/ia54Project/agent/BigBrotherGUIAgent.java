@@ -26,7 +26,7 @@ public class BigBrotherGUIAgent extends Agent{
 	
 	@Override
 	public Status live() {
-		
+
 
 		return super.live();
 	}

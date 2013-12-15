@@ -1,6 +1,8 @@
 package org.janusproject.kernel.network.jxse.agent;
 
+import java.util.Collection;
 import java.util.EventListener;
+import java.util.Vector;
 
 import org.ia54Project.agent.BigBrotherGUIAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
@@ -19,6 +21,9 @@ import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.capacity.CapacityImplementation;
 import org.janusproject.kernel.crio.capacity.CapacityImplementationType;
 import org.janusproject.kernel.crio.core.GroupAddress;
+import org.janusproject.kernel.crio.core.Organization;
+import org.janusproject.kernel.crio.core.Role;
+import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.network.NetworkAdapter;
 import org.janusproject.kernel.repository.Repository;
 import org.janusproject.kernel.status.Status;
@@ -30,6 +35,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 	private GroupAddress OrganizationManagerAddress;
 	private GroupAddress OrganizationControllerAddress;
 	private Boolean guiEnabled = false;	
+	private Collection<Class<? extends Role>> roleList;
 	
 	public Boolean getGuiEnabled() {
 		return guiEnabled;
@@ -41,8 +47,8 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
-		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		this.guiEnabled = guiEnabled;
+		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
@@ -55,6 +61,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
+		
 
 	}
 
@@ -88,6 +95,27 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 		@Override
 		public Status live() {
 			//print("je prend le rôle manager");
+//			Organization org = getOrganization(OrganizationController.class);
+//			print(org);
+//			Collection<Class<? extends Role>> roles = org.getDefinedRoles();
+//			if(roles != null) {
+//				if(roles.iterator().hasNext()) {
+//					Class<? extends Role> c = roles.iterator().next();
+//					if(c == RoleGUIManager.class)
+//						try {
+//							print(c.getField("state").getName());
+//						} catch (SecurityException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} catch (NoSuchFieldException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//					if(c == RoleControlManager.class)
+//						print("fu2");
+//				}
+//			}
+			
 			return super.live();
 		}
 	}

@@ -1,12 +1,43 @@
 package org.ia54Project.dataModel;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 public class DataModel {
-	Collection<MachineModel> content;
+	private Collection<MachineModel> content;
+	private List<BigBrotherListener> _listeners = new ArrayList();
+	private Collection<AgentModel> allAgents;
+	private Collection<RoleModel> allRoles;
+	private Collection<OrganizationModel> allOrgs;
+	private Collection<KernelModel> allKernels;
+	private Collection<MachineModel> allMachines;
 	
-	public DataModel() {
+	public synchronized void addEventListener(BigBrotherListener listener)  {
+		_listeners.add(listener);
+	}
+	public synchronized void removeEventListener(BigBrotherListener listener)   {
+		_listeners.remove(listener);
+	}
+
+	// call this method whenever you want to notify
+	//the event listeners of the particular event
+	private synchronized void fireEvent() {
+		BigBrotherDataChangeEvent event = new BigBrotherDataChangeEvent(this);
+		for (BigBrotherListener listener : _listeners) {
+			System.out.println("fired");
+			listener.onDataChange(event);
+			
+		}
 		
+	}
+
+
+
+	public DataModel() {
+
 	}
 
 	public DataModel(Collection<MachineModel> content) {
@@ -14,12 +45,76 @@ public class DataModel {
 		this.content = content;
 	}
 
-	public Collection<MachineModel> getContent() {
+	
+	private void buildCollection() {
+		allAgents = new Vector<AgentModel> ();
+		allRoles = new Vector<RoleModel> ();
+		allOrgs = new Vector<OrganizationModel> ();
+		allKernels = new Vector<KernelModel> ();
+		allMachines = new Vector<MachineModel> ();
+		if(content == null)
+			return;
+		for (MachineModel machine : content) {
+			allMachines.add(machine);
+			if(machine.getKernelList() == null)
+				return;
+			for (KernelModel kernel : machine.getKernelList()) {
+				allKernels.add(kernel);
+				if(kernel.getLonelyAgentList() == null)
+					return;
+				for(AgentModel lonelyAgent : kernel.getLonelyAgentList()) {
+					allAgents.add(lonelyAgent);
+				}
+				
+				if( kernel.getOrgList() == null)
+					return;
+				for(OrganizationModel org : kernel.getOrgList()) {
+					allOrgs.add(org);
+					if(org.getRoleList() == null)
+						return;
+					for(RoleModel role: org.getRoleList()) {
+						allRoles.add(role);
+						if(role.getPlayerList() == null)
+							return;
+						for(AgentModel agent: role.getPlayerList()) {
+							allAgents.add(agent);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public synchronized Collection<MachineModel> getContent() {
 		return content;
 	}
 
-	public void setContent(Collection<MachineModel> content) {
+	public synchronized void setContent(Collection<MachineModel> content) {
 		this.content = content;
+		buildCollection();
+		fireEvent();
 	}
 	
+	public Collection<AgentModel> getAllAgents() {
+		return allAgents;
+	}
+	
+	public Collection<RoleModel> getAllRoles() {
+		return allRoles;
+	}
+
+	public Collection<OrganizationModel> getAllOrgs() {
+		return allOrgs;
+	}
+
+	public Collection<KernelModel> getAllKernels() {
+		return allKernels;
+	}
+
+	public Collection<MachineModel> getAllMachines() {
+		return allMachines;
+	}
+
+
+
 }

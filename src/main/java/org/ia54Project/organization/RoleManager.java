@@ -32,8 +32,8 @@ public class RoleManager  extends Role{
 		//print("Je suis dans le role manager");
 		Message m = getMessage();
 		if( m != null) {
-			print("MailboxSize: " + getMailboxSize());
-			print(m);
+			//print("MailboxSize: " + getMailboxSize());
+			//print(m);
 
 			
 			if( m instanceof StringMessage) {

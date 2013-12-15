@@ -23,6 +23,11 @@ public class AgentModel {
 		
 	}
 
+	public AgentModel(String name) {
+		setName(name);
+	}
+
+	
 	public AgentModel(String name, AgentAddress adr) {
 		setName(name);
 		setAddress(adr);
@@ -116,6 +121,11 @@ public class AgentModel {
 		this.listOfRole = listOfRole;
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getName();
+	}
 //	getRoles()
 //	--isAlive()
 //	isCompound()

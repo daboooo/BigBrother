@@ -36,7 +36,7 @@ public class RoleCollecteur extends Role{
 	@Override
 	public Status live() {
 		Message message = new StringMessage("Bonjour Manager");
-		print("Je suis dans le role collecteur et j'envoie : " + message.toString());
+		//print("Je suis dans le role collecteur et j'envoie : " + message.toString());
 		broadcastMessage(RoleManager.class, message);
 		
 //		switch (state) {

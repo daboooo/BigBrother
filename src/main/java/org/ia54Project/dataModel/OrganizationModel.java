@@ -1,15 +1,15 @@
 package org.ia54Project.dataModel;
 
-import java.util.Vector;
+import java.util.Collection;
 
 import org.janusproject.kernel.crio.core.GroupAddress;
 
 public class OrganizationModel {
 	String name;
-	Vector<GroupAddress> groupAdresses; // getGroupAddresses()
+	Collection<GroupAddress> groupAdresses; // getGroupAddresses()
 	Integer nbInstance; //getGroupCount()
 	
-	Vector<RoleModel> roleList;
+	Collection<RoleModel> roleList;
 	
 
 	public OrganizationModel() {
@@ -28,11 +28,11 @@ public class OrganizationModel {
 		this.name = name;
 	}
 
-	public Vector<GroupAddress> getGroupAdresses() {
+	public Collection<GroupAddress> getGroupAdresses() {
 		return groupAdresses;
 	}
 
-	public void setGroupAdresses(Vector<GroupAddress> groupAdresses) {
+	public void setGroupAdresses(Collection<GroupAddress> groupAdresses) {
 		this.groupAdresses = groupAdresses;
 	}
 
@@ -44,12 +44,17 @@ public class OrganizationModel {
 		this.nbInstance = nbInstance;
 	}
 
-	public Vector<RoleModel> getRoleList() {
+	public Collection<RoleModel> getRoleList() {
 		return roleList;
 	}
 	
-	public void setRoleList(Vector<RoleModel> roleList) {
+	public void setRoleList(Collection<RoleModel> roleList) {
 		this.roleList = roleList;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 }

@@ -1,6 +1,6 @@
 package org.ia54Project.dataModel;
 
-import java.util.Vector;
+import java.util.Collection;
 
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.RoleAddress;
@@ -14,7 +14,7 @@ public class RoleModel {
 	Boolean hasMesage;
 	Boolean isReleased;
 	Boolean isSleeping;
-	Vector<AgentModel> playerList;
+	Collection<AgentModel> playerList;
 	
 	
 	public RoleModel() {
@@ -51,10 +51,10 @@ public class RoleModel {
 	public void setBox(Mailbox box) {
 		this.box = box;
 	}
-	public Vector<AgentModel> getPlayerList() {
+	public Collection<AgentModel> getPlayerList() {
 		return playerList;
 	}
-	public void setPlayerList(Vector<AgentModel> playerList) {
+	public void setPlayerList(Collection<AgentModel> playerList) {
 		this.playerList = playerList;
 	}
 	public Boolean getHasMesage() {
@@ -76,6 +76,11 @@ public class RoleModel {
 		this.isSleeping = isSleeping;
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getName();
+	}
 //	getLeaveConditions()
 //	getObtainConditions()
 

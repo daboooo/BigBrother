@@ -1,11 +1,11 @@
 package org.ia54Project.dataModel;
 
-import java.util.Vector;
+import java.util.Collection;
 
 public class MachineModel {
 	String name;
 	String ip;
-	Vector<KernelModel> kernelList;
+	Collection<KernelModel> kernelList;
 
 
 	public MachineModel() {
@@ -30,12 +30,17 @@ public class MachineModel {
 	}
 	
 	
-	public Vector<KernelModel> getKernelList() {
+	public Collection<KernelModel> getKernelList() {
 		return kernelList;
 	}
 
-	public void setKernelList(Vector<KernelModel> kernelList) {
+	public void setKernelList(Collection<KernelModel> kernelList) {
 		this.kernelList = kernelList;
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getName();
+	}
 }

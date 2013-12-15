@@ -49,4 +49,10 @@ public class KernelModel {
 		this.kernelAddress = kernelAddress;
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getName();
+	}
+	
 }
