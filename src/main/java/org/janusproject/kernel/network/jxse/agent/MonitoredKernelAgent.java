@@ -1,6 +1,9 @@
 package org.janusproject.kernel.network.jxse.agent;
 
+import java.util.Collection;
 import java.util.EventListener;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.ia54Project.agent.BigBrotherGUIAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
@@ -11,6 +14,9 @@ import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
 import org.ia54Project.organization.RoleManager;
 import org.ia54Project.swingGUI.BigBrotherFrame;
+import org.janusproject.kernel.KernelEvent;
+import org.janusproject.kernel.KernelListener;
+import org.janusproject.kernel.address.Address;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;
@@ -18,19 +24,37 @@ import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.capacity.CapacityImplementation;
 import org.janusproject.kernel.crio.capacity.CapacityImplementationType;
 import org.janusproject.kernel.crio.core.GroupAddress;
+import org.janusproject.kernel.crio.core.Organization;
+import org.janusproject.kernel.crio.core.Role;
+import org.janusproject.kernel.crio.core.RoleAddress;
+import org.janusproject.kernel.crio.organization.Group;
+import org.janusproject.kernel.crio.organization.GroupCondition;
+import org.janusproject.kernel.crio.organization.GroupEvent;
+import org.janusproject.kernel.crio.organization.GroupListener;
+import org.janusproject.kernel.crio.organization.MembershipService;
+import org.janusproject.kernel.crio.role.RolePlayingEvent;
+import org.janusproject.kernel.crio.role.RolePlayingListener;
+import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.network.NetworkAdapter;
 import org.janusproject.kernel.repository.Repository;
+import org.janusproject.kernel.repository.RepositoryChangeEvent;
+import org.janusproject.kernel.repository.RepositoryChangeListener;
+import org.janusproject.kernel.repository.RepositoryChangeEvent.ChangeType;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
+import org.janusproject.kernel.util.sizediterator.SizedIterator;
+import org.janusproject.kernel.util.throwable.Throwables;
 
-public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
+public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 
 	private static final long serialVersionUID = 8826290855685530386L;
 	private GroupAddress OrganizationManagerAddress;
 	private GroupAddress OrganizationControllerAddress;
 	private Boolean guiEnabled = false;	
+	private CollecteurAgent collecteur = new CollecteurAgent();
 	
 	public Boolean getGuiEnabled() {
+		
 		return guiEnabled;
 	}
 
@@ -40,21 +64,30 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 
 	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
+		
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
-		this.guiEnabled = guiEnabled;
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
+		this.guiEnabled = guiEnabled;
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
-		launchHeavyAgent(new CollecteurAgent(),"CollecteurAgent");
+		launchHeavyAgent(collecteur,"CollecteurAgent");
 		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
 
-		if(this.guiEnabled) {
+		/*if(this.guiEnabled) {
 			getOrCreateGroup(OrganizationController.class);
 			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
-		}
+		}*/
 
+	}
+	
+	@Override
+	public Status live() {
+		
+		//launchHeavyAgent(new ExecutantAgent(), "Agent");
+		
+		return super.live();
 	}
 
 	// ==================== GUI Manager ====================
@@ -122,6 +155,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 	private class CollecteurAgent extends Agent {
 
 		private static final long serialVersionUID = 6935534328201480630L;
+		private RoleCollecteur myRole;
 
 		@Override
 		public Status activate(Object... parameters) {
@@ -130,8 +164,22 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			if (requestRole(RoleCollecteur.class,OrganizationManagerAddress)==null) {
 				throw new IllegalArgumentException("RoleCollecteur");
 			}
-
+			
+			this.setRole(getRole(OrganizationManagerAddress, RoleCollecteur.class));
+			
+			MonitoredKernelAgent.this.addGroupListener(myRole);
+			MonitoredKernelAgent.this.addRolePlayingListener(myRole);
+			MonitoredKernelAgent.this.addKernelListener(myRole);
+			
 			return super.activate(parameters);
+		}
+		
+		private void setRole(RoleCollecteur role) {
+			myRole = role;
+		}
+		
+		private RoleCollecteur getRole() {
+			return myRole;
 		}
 
 		@Override
@@ -159,4 +207,13 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent{
 			call.setOutputValues(result);
 		}
 	}
+
+
+	
+	
+	
+	
+
+	
+		
 }

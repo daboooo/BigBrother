@@ -3,37 +3,47 @@ package org.ia54Project.dataModel;
 import java.util.Vector;
 
 import org.janusproject.kernel.crio.core.GroupAddress;
+import org.janusproject.kernel.crio.core.Organization;
 
 public class OrganizationModel {
-	String name;
-	Vector<GroupAddress> groupAdresses; // getGroupAddresses()
-	Integer nbInstance; //getGroupCount()
-	
-	Vector<RoleModel> roleList;
-	
+	private Class<? extends Organization> classe;
+	//private Vector<GroupAddress> groupAdresses;
+	private Integer nbInstance; //getGroupCount()
+	private Vector<GroupModel> groupList;
 
 	public OrganizationModel() {
 		
 	}
 
-	public OrganizationModel(String name) {
-		setName(name);
+	public OrganizationModel(Class<? extends Organization> classe) {
+		setClasse(classe);
 	}
 	
-	public String getName() {
-		return name;
+	
+	
+
+//	public Vector<GroupAddress> getGroupAdresses() {
+//		return groupAdresses;
+//	}
+//
+//	public void setGroupAdresses(Vector<GroupAddress> groupAdresses) {
+//		this.groupAdresses = groupAdresses;
+//	}
+
+	public OrganizationModel(Organization organization, GroupModel groupModel) {
+		groupList = new Vector<GroupModel>();
+		groupList.add(groupModel);
+		
+		classe = organization.getClass();
+		nbInstance = organization.getGroupCount();
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public Class<? extends Organization> getClasse() {
+		return classe;
 	}
 
-	public Vector<GroupAddress> getGroupAdresses() {
-		return groupAdresses;
-	}
-
-	public void setGroupAdresses(Vector<GroupAddress> groupAdresses) {
-		this.groupAdresses = groupAdresses;
+	public void setClasse(Class<? extends Organization> classe) {
+		this.classe = classe;
 	}
 
 	public Integer getNbInstance() {
@@ -44,12 +54,12 @@ public class OrganizationModel {
 		this.nbInstance = nbInstance;
 	}
 
-	public Vector<RoleModel> getRoleList() {
-		return roleList;
+	public Vector<GroupModel> getGroupList() {
+		return groupList;
 	}
 	
-	public void setRoleList(Vector<RoleModel> roleList) {
-		this.roleList = roleList;
+	public void setGroupList(Vector<GroupModel> groupList) {
+		this.groupList = groupList;
 	}
 
 }
