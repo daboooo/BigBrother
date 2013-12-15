@@ -3,6 +3,8 @@ package org.ia54Project.organization;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import org.ia54Project.BigBrotherUtil;
@@ -28,38 +30,90 @@ import org.janusproject.kernel.status.Status;
 public class RoleControlManager extends Role{
 	private Integer nbSend = 0;
 	private final SignalListener signalListener = new MySignalListener();
+	private State state;
+	private long timeToRespond = 1000; // in millisecond
+	private Timer timer;
+	private TimerTask sendResponse;
+	private Vector<KernelModel> kernelsReplied;
+	private Vector<MachineModel> machineReplied;
 
+//	RoleControlManager() {
+//		kernelsReplied = new Vector<KernelModel> ();
+//		timer = new Timer();
+//		sendResponse = new TimerTask() {	
+//			@Override
+//			public void run() {
+//				sendMessage(RoleGUIManager.class, new MessageDataModel(buildDataModel()));
+//				state = State.LISTENNING;
+//			}
+//		};
+//	}
+	
 	public Status activate(Object... parameters) {
 	   getSignalManager().setPolicy(SignalPolicy.FIRE_SIGNAL);
 	   addSignalListener(signalListener);
+	   state = State.LISTENNING;
 	   
 	   return null;
 	}
 	
 	@Override
 	public Status live() {
-		Message m = getMessage();
-		if(m != null) {
-			print("got message:" + m);
-			RoleAddress guiManager = getRoleAddress(getOrCreateGroup(OrganizationController.class), RoleGUIManager.class, RoleAddress.class.cast(m.getSender()).getPlayer());
-			if(m.getSender() == guiManager && nbSend < 109999) {
-				if(m instanceof StringMessage) {
-					// request of dataModel
-					if(StringMessage.class.cast(m).getContent().equals("request")) {
-						// sending response
-					
-						print("sending RESPONSE");
-						sendMessage(RoleGUIManager.class, new MessageDataModel(buildFakeData()));
-						nbSend++;
-						nbSend%=99999;
+		switch(state) {
+		case LISTENNING:
+			Message m = getMessage();
+			if(m != null) {
+				print("got message:" + m);
+				RoleAddress guiManager = getRoleAddress(getOrCreateGroup(OrganizationController.class), RoleGUIManager.class, RoleAddress.class.cast(m.getSender()).getPlayer());
+				if(m.getSender() == guiManager && nbSend < 109999) {
+					if(m instanceof StringMessage) {
+						// request of dataModel
+						if(StringMessage.class.cast(m).getContent().equals("request")) {
+							testMode();
+//							state = State.BUILDING_DATAMODEL;
+//							timer.schedule(sendResponse, timeToRespond);
+						}
 					}
+					
 				}
-				
 			}
+		break;
+		case BUILDING_DATAMODEL:
+			// send signal to all RoleManager
+			
+		break;
+		case SLEEPING:
+		break;
+		default:
+			
 		}
 		
 		
 		return null;
+	}
+	
+	public void testMode() {
+		// sending response
+		
+		print("sending RESPONSE");
+		nbSend++;
+		nbSend%=99999;
+		sendMessage(RoleGUIManager.class, new MessageDataModel(buildFakeData()));
+	}
+	
+	public DataModel buildDataModel() {
+		DataModel data = new DataModel();
+		data.setContent(buildMachineModels());
+		return data;
+		
+	}
+	
+	public Collection<MachineModel> buildMachineModels(){
+		Collection<MachineModel> machines = new Vector<MachineModel>();
+		MachineModel mm = new MachineModel();
+		
+		return null;
+		
 	}
 	
 	public DataModel buildFakeData() {
@@ -159,4 +213,12 @@ public class RoleControlManager extends Role{
 			
 		}
 	}
+	
+	enum State {
+		LISTENNING,
+		BUILDING_DATAMODEL,
+		SLEEPING
+	}
+	
+
 }

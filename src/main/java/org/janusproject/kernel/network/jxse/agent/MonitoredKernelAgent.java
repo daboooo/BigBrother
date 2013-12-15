@@ -65,14 +65,19 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 
 	public void setGuiEnabled(Boolean guiEnabled) {
 		this.guiEnabled = guiEnabled;
+		if(guiEnabled) {
+			getOrCreateGroup(OrganizationController.class);
+			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
+			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
+			frame.setVisible(true);
+		}
 	}
 
-	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
+	MonitoredKernelAgent(Boolean guiB, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
-		
+		guiEnabled = guiB;
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
-		this.guiEnabled = guiEnabled;
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(collecteur,"CollecteurAgent");

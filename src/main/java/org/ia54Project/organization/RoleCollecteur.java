@@ -230,7 +230,7 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 		groupModel.setGroupAddress(group.getAddress());
 		
 		Organization organization = group.getOrganization();
-		
+		print("GROUP_CREATED--------------------------------------------------------------------------------");
 		insert(groupModel, organization);
 	}
 
