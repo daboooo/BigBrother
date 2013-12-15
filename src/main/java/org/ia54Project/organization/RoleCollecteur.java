@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
+import org.ia54Project.dataModel.MessageKernelModel;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.ia54Project.dataModel.RoleModel;
 import org.janusproject.kernel.KernelEvent;
@@ -23,6 +24,8 @@ import org.janusproject.kernel.crio.organization.GroupEvent;
 import org.janusproject.kernel.crio.organization.GroupListener;
 import org.janusproject.kernel.crio.role.RolePlayingEvent;
 import org.janusproject.kernel.crio.role.RolePlayingListener;
+import org.janusproject.kernel.message.Message;
+import org.janusproject.kernel.message.StringMessage;
 import org.janusproject.kernel.repository.Repository;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
@@ -41,16 +44,19 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	 
 	@Override
 	public Status live() {
-//		if(kernelModel.getOrgList() != null) {
-//			for (OrganizationModel organizationModel : kernelModel.getOrgList()) {
-//				print(organizationModel.getClasse());
-//				if(organizationModel.getGroupList() != null) {
-//					for (GroupModel groupModel : organizationModel.getGroupList()) {
-//						print("GROUUUUUUUUUUUUUUUP" + groupModel.getGroupAddress());
-//					}
-//				}
-//			}
-//		}
+		Message message = getMessage();
+		
+		// Lorsque l'on recoit un message "request", celui-ci provient du role Manager
+		// Cela signifie qu'il nous demande des informations
+		// On lui envoie donc un message contenant le KernelModel construit
+		if(message != null && message instanceof StringMessage) {
+			String stringMessage = ((StringMessage)message).getContent();
+			if(stringMessage.equals("request")) {
+				MessageKernelModel messageKernelModel = new MessageKernelModel(kernelModel);
+				RoleAddress roleAddress = getRoleAddress(RoleManager.class);
+				sendMessage(roleAddress, messageKernelModel);
+			}
+		}
 		return null;
 	}
 	

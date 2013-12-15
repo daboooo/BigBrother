@@ -54,7 +54,6 @@ public class RoleControlManager extends Role{
 						nbSend%=99999;
 					}
 				}
-				
 			}
 		}
 		
@@ -155,7 +154,7 @@ public class RoleControlManager extends Role{
 
 	private class MySignalListener implements SignalListener {
 		public void onSignal(Signal signal) {
-			//print("je suis dans le role controlManager et je reçoit le signal : "+ signal.getValueAt(0));
+			
 			
 		}
 	}
