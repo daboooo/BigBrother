@@ -12,17 +12,11 @@ import javax.swing.JViewport;
 
 public class BigBrotherDetailView extends JPanel {
 	private static final long serialVersionUID = 6571315940317225398L;
-	private static final Dimension stdDim = new Dimension(1300,700);
-	private LayoutManager layout;
-	protected JList desc;
-	protected JList info;
+	private static final Dimension stdDim = new Dimension(800,400);
+
 	
 	public BigBrotherDetailView() {
 		this.setPreferredSize(stdDim);
-		layout = new BoxLayout(this,BoxLayout.LINE_AXIS);
-		this.setLayout(layout);
-		this.add(desc = new JList());
-		this.add(info = new JList());
 
 	}
 }

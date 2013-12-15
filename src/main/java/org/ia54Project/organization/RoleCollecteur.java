@@ -230,14 +230,14 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	// ---------- Listeners ----------
 	
 	public void groupCreated(GroupEvent event) {
-		Group group = event.getGroup();
-		GroupModel groupModel = new GroupModel();
-		groupModel.setRoleList(new Vector<RoleModel>());
-		groupModel.setGroupAddress(group.getAddress());
-		
-		Organization organization = group.getOrganization();
-		print("GROUP_CREATED--------------------------------------------------------------------------------");
-		insert(groupModel, organization);
+//		Group group = event.getGroup();
+//		GroupModel groupModel = new GroupModel();
+//		groupModel.setRoleList(new Vector<RoleModel>());
+//		groupModel.setGroupAddress(group.getAddress());
+//		
+//		Organization organization = group.getOrganization();
+//		print("GROUP_CREATED--------------------------------------------------------------------------------");
+//		insert(groupModel, organization);
 	}
 
 	public void groupDestroyed(GroupEvent event) {

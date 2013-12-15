@@ -1,11 +1,10 @@
-package org.ia54Project.swingGUI;
+package org.ia54Project.swingGUI.view;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
-import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -29,13 +28,13 @@ import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.ia54Project.dataModel.RoleModel;
-import org.ia54Project.swingGUI.view.BigBrotherAgentView;
-import org.ia54Project.swingGUI.view.BigBrotherDetailView;
-import org.ia54Project.swingGUI.view.BigBrotherGroupView;
-import org.ia54Project.swingGUI.view.BigBrotherKernelView;
-import org.ia54Project.swingGUI.view.BigBrotherMachineView;
-import org.ia54Project.swingGUI.view.BigBrotherOrganizationView;
-import org.ia54Project.swingGUI.view.BigBrotherRoleView;
+import org.ia54Project.swingGUI.TreeUtil;
+import org.ia54Project.swingGUI.view.standard.BigBrotherAgentView;
+import org.ia54Project.swingGUI.view.standard.BigBrotherGroupView;
+import org.ia54Project.swingGUI.view.standard.BigBrotherKernelView;
+import org.ia54Project.swingGUI.view.standard.BigBrotherMachineView;
+import org.ia54Project.swingGUI.view.standard.BigBrotherOrganizationView;
+import org.ia54Project.swingGUI.view.standard.BigBrotherRoleView;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.RoleAddress;
@@ -55,7 +54,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 
 
 
-	BigBrotherStandardView (BigBrotherChannel bbChannel) {	
+	public BigBrotherStandardView (BigBrotherChannel bbChannel) {	
 		super();
 		this.bbChannel = new WeakReference<BigBrotherChannel>(bbChannel);
 		bbChannel.addBigBrotherListener(this);
@@ -64,7 +63,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 		setDividerLocation(HORIZONTAL_SPLIT);
 		setDoubleBuffered(true);
 		setOneTouchExpandable(true);
-		setDividerLocation(200);
+		setDividerLocation(380);
 
 		initLeftPane(bbChannel.getData());
 		initRightPane();
@@ -87,7 +86,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	public void initRightPane() {
 		rightScroll = new JScrollPane();
 		rightPane = rightScroll.getViewport();
-		//rightPane.setMinimumSize(minimumSize);
 		rightPane.add(detailView);
 		this.setRightComponent(rightScroll);
 	}
