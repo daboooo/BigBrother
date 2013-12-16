@@ -2,6 +2,7 @@ package org.janusproject.kernel.network.jxse.agent;
 
 import java.util.Collection;
 import java.util.EventListener;
+import java.util.Iterator;
 import java.util.Vector;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -67,12 +68,11 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		this.guiEnabled = guiEnabled;
 	}
 
-	MonitoredKernelAgent(Boolean guiEnabled, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
+	MonitoredKernelAgent(AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
 		
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
-		this.guiEnabled = guiEnabled;
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(collecteur,"CollecteurAgent");

@@ -3,9 +3,11 @@ package org.ia54Project.organization;
 import java.util.Collection;
 import java.util.Vector;
 
+import org.ia54Project.BigBrotherUtil;
 import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
+import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageKernelModel;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.ia54Project.dataModel.RoleModel;
@@ -33,6 +35,7 @@ import org.janusproject.kernel.status.StatusFactory;
 //, KernelListener
 public class RoleCollecteur extends Role implements KernelListener, RolePlayingListener, GroupListener {
 	
+	private MachineModel machineModel = new MachineModel();
 	private KernelModel kernelModel = new KernelModel();
 	
 	@Override
@@ -45,6 +48,12 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	@Override
 	public Status live() {
 		Message message = getMessage();
+		
+		machineModel.setName(BigBrotherUtil.getComputerFullName());
+		machineModel.setIp(BigBrotherUtil.getIP());
+		Collection<KernelModel> kernelModels = new Vector<KernelModel>();
+		kernelModels.add(kernelModel);
+		machineModel.setKernelList(kernelModels);
 		
 		// Lorsque l'on recoit un message "request", celui-ci provient du role Manager
 		// Cela signifie qu'il nous demande des informations
@@ -80,7 +89,7 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 			if(res instanceof Repository<?, ?>) {
 				Agent agent = ((Repository<AgentAddress, ? extends Agent>)res).get(agentAddress);
 				AgentModel agentModel = new AgentModel(agent);
-				kernelModel.getLonelyAgentList().add(agentModel);
+				//kernelModel.getLonelyAgentList().add(agentModel);
 			}
 		}
 	}
@@ -236,7 +245,7 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 		groupModel.setGroupAddress(group.getAddress());
 		
 		Organization organization = group.getOrganization();
-		
+		print("GROUP_CREATED--------------------------------------------");
 		insert(groupModel, organization);
 	}
 

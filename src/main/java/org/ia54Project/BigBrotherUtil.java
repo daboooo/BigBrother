@@ -41,4 +41,13 @@ public class BigBrotherUtil {
 	    }//end try
 	    return hostName;
 	  }//end getComputerFullName
+	
+	public static String getIP() {
+	    String addr = null;
+	    try {
+	      addr = InetAddress.getLocalHost().getHostAddress();
+	    } catch(final Exception e) {
+	    }//end try
+	    return addr;
+	  }//
 }

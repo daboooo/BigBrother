@@ -15,7 +15,7 @@ public class MonitoredKernelAgentFactory implements KernelAgentFactory {
 			AgentActivator activator, EventListener startUpListener,
 			String applicationName) throws Exception {
 		
-		return new MonitoredKernelAgent(true,activator, commitSuicide, startUpListener, applicationName, new DefaultJxtaNetworkAdapter());
+		return new MonitoredKernelAgent(activator, commitSuicide, startUpListener, applicationName, new DefaultJxtaNetworkAdapter());
 	}
 
 }

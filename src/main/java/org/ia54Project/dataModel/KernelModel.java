@@ -1,7 +1,7 @@
 package org.ia54Project.dataModel;
 
 import java.util.Collection;
-import java.util.Collection;
+import java.util.Vector;
 
 import org.janusproject.kernel.address.AgentAddress;
 
@@ -28,7 +28,8 @@ public class KernelModel {
 	}
 
 	public KernelModel() {
-		
+		orgList = new Vector<OrganizationModel>();
+		lonelyAgentList = new Vector<AgentModel>();
 	}
 	
 	public KernelModel(String name, AgentAddress kernelAddress) {
