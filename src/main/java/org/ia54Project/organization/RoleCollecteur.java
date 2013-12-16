@@ -9,6 +9,7 @@ import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageKernelModel;
+import org.ia54Project.dataModel.MessageMachineModel;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.ia54Project.dataModel.RoleModel;
 import org.janusproject.kernel.KernelEvent;
@@ -41,7 +42,11 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	@Override
 	public Status activate(Object... parameters) {	
 		addObtainCondition(new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));
-		
+		machineModel.setName(BigBrotherUtil.getComputerFullName());
+		machineModel.setIp(BigBrotherUtil.getIP());
+		Collection<KernelModel> kernelModels = new Vector<KernelModel>();
+		kernelModels.add(kernelModel);
+		machineModel.setKernelList(kernelModels);
 		return StatusFactory.ok(this);
 	}
 	 
@@ -49,21 +54,15 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	public Status live() {
 		Message message = getMessage();
 		
-		machineModel.setName(BigBrotherUtil.getComputerFullName());
-		machineModel.setIp(BigBrotherUtil.getIP());
-		Collection<KernelModel> kernelModels = new Vector<KernelModel>();
-		kernelModels.add(kernelModel);
-		machineModel.setKernelList(kernelModels);
-		
 		// Lorsque l'on recoit un message "request", celui-ci provient du role Manager
 		// Cela signifie qu'il nous demande des informations
 		// On lui envoie donc un message contenant le KernelModel construit
 		if(message != null && message instanceof StringMessage) {
 			String stringMessage = ((StringMessage)message).getContent();
 			if(stringMessage.equals("request")) {
-				MessageKernelModel messageKernelModel = new MessageKernelModel(kernelModel);
+				MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
 				RoleAddress roleAddress = getRoleAddress(RoleManager.class);
-				sendMessage(roleAddress, messageKernelModel);
+				sendMessage(roleAddress, messageMachineModel);
 			}
 		}
 		return null;

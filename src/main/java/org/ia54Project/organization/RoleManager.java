@@ -1,6 +1,12 @@
 package org.ia54Project.organization;
 
-import org.ia54Project.dataModel.MessageKernelModel;
+import java.util.Collection;
+
+import org.ia54Project.dataModel.GroupModel;
+import org.ia54Project.dataModel.KernelModel;
+import org.ia54Project.dataModel.MachineModel;
+import org.ia54Project.dataModel.MessageMachineModel;
+import org.ia54Project.dataModel.OrganizationModel;
 import org.janusproject.kernel.agentsignal.Signal;
 import org.janusproject.kernel.agentsignal.SignalListener;
 import org.janusproject.kernel.agentsignal.SignalPolicy;
@@ -31,12 +37,35 @@ public class RoleManager  extends Role{
 		// Si on reçoit un message de type MessageKernelModel c'est qu'il est envoyé par le collecteur
 		// Donc on envoie un signal contenant ce MessageKernelModel
 		// celui-ci sera récupéré par le role controlManager
-		if(message != null && message instanceof MessageKernelModel) {
-			Signal signal = new Signal(this, "SIGNAL_RESPONSE", message);
+		if(message != null && message instanceof MessageMachineModel) {
+			MachineModel machineModel = ((MessageMachineModel)message).getContent();
+			clean(machineModel);
+			MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
+			Signal signal = new Signal(this, "SIGNAL_RESPONSE", messageMachineModel);
 			getSignalManager().fireSignal(signal);
 		}
 		
 		return StatusFactory.ok(this);
+	}
+	
+	private void clean(MachineModel machineModel) {
+		Collection<KernelModel> kernelModels = machineModel.getKernelList();
+		for (KernelModel kernelModel : kernelModels) {
+			Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+			for (OrganizationModel organizationModel : organizationModels) {
+				Collection<GroupModel> groupModels = organizationModel.getGroupList();
+				if(groupModels.size() == 0) {
+					organizationModels.remove(organizationModel);
+				}
+				else {
+					for (GroupModel groupModel : groupModels) {
+						if(groupModel.getRoleList().size() == 0) {
+							groupModels.remove(groupModel);
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private class MySignalListener implements SignalListener {
