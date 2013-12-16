@@ -1,62 +1,22 @@
 package org.ia54Project.swingGUI.view.standard;
 
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.SwingConstants;
-
-import java.awt.GridBagLayout;
-
-import javax.swing.JTabbedPane;
-
 import java.awt.GridBagConstraints;
-
-import javax.swing.JSplitPane;
-import javax.swing.JTree;
-import javax.swing.JScrollPane;
-import javax.swing.JPanel;
-
-import java.awt.BorderLayout;
-
-import javax.swing.JList;
-import javax.swing.JLabel;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.factories.FormFactory;
-
-import javax.swing.AbstractListModel;
-import javax.swing.BoxLayout;
-
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.CardLayout;
+import java.awt.Insets;
+import java.util.Vector;
 
-import net.miginfocom.swing.MigLayout;
-
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.Border;
-import javax.swing.event.TableModelListener;
-import javax.swing.JTextArea;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
-import java.awt.List;
-
-import javax.swing.JButton;
 
 import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.swingGUI.view.BigBrotherDetailView;
-
-import java.awt.Insets;
-import java.util.Vector;
 
 public class BigBrotherAgentView extends BigBrotherDetailView{
 
