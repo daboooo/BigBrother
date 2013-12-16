@@ -160,7 +160,7 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	 */
 	private void insert(AgentAddress agentAddress, RoleAddress roleAddress, Class<? extends Role> roleClass, Group group, Organization organization) {
 		Collection<AgentModel> agentModels = kernelModel.getLonelyAgentList();
-		AgentModel goodAgentModel = new AgentModel();
+		AgentModel goodAgentModel = new AgentModel(null);
 		for (AgentModel agentModel : agentModels) {
 			if(agentModel.getAddress() == agentAddress) {
 				goodAgentModel = agentModel;
@@ -172,10 +172,10 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 		Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
 		for (OrganizationModel organizationModel : organizationModels) {
 			if (organizationModel.getClasse() == organization.getClass()) {
-				Vector<GroupModel> groupModels = organizationModel.getGroupList();
+				Collection<GroupModel> groupModels = organizationModel.getGroupList();
 				for (GroupModel groupModel : groupModels) {
 					if (groupModel.getGroupAddress() == group.getAddress()) {
-						Vector<RoleModel> roleModels = groupModel.getRoleList();
+						Collection<RoleModel> roleModels = groupModel.getRoleList();
 						for (RoleModel roleModel : roleModels) {
 							if (roleModel.getRoleAddress() == roleAddress) {
 								goodAgentModel.getListOfRole().add(roleModel.toString());
@@ -207,10 +207,10 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 		Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
 		for (OrganizationModel organizationModel : organizationModels) {
 			if (organizationModel.getClasse() == organization.getClass()) {
-				Vector<GroupModel> groupModels = organizationModel.getGroupList();
+				Collection<GroupModel> groupModels = organizationModel.getGroupList();
 				for (GroupModel groupModel : groupModels) {
 					if (groupModel.getGroupAddress() == group.getAddress()) {
-						Vector<RoleModel> roleModels = groupModel.getRoleList();
+						Collection<RoleModel> roleModels = groupModel.getRoleList();
 						for (RoleModel roleModel : roleModels) {
 							if (roleModel.getRoleAddress() == roleAddress) {
 								Vector<AgentModel> agentModels = (Vector<AgentModel>) roleModel.getPlayerList();
@@ -240,7 +240,7 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 	
 	public void groupCreated(GroupEvent event) {
 		Group group = event.getGroup();
-		GroupModel groupModel = new GroupModel();
+		GroupModel groupModel = new GroupModel(null);
 		groupModel.setRoleList(new Vector<RoleModel>());
 		groupModel.setGroupAddress(group.getAddress());
 		

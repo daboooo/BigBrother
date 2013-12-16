@@ -1,12 +1,11 @@
 package org.janusproject.kernel.network.jxse.agent;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.EventListener;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.UUID;
-import java.util.logging.Logger;
-
 import org.ia54Project.agent.BigBrotherGUIAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
 import org.ia54Project.organization.OrganizationController;
@@ -16,39 +15,20 @@ import org.ia54Project.organization.RoleControlManager;
 import org.ia54Project.organization.RoleExecutant;
 import org.ia54Project.organization.RoleManager;
 import org.ia54Project.swingGUI.BigBrotherFrame;
-import org.janusproject.kernel.KernelEvent;
-import org.janusproject.kernel.KernelListener;
-import org.janusproject.kernel.address.Address;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;
 import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.capacity.CapacityImplementation;
 import org.janusproject.kernel.crio.capacity.CapacityImplementationType;
+import org.janusproject.kernel.crio.core.CRIOContext;
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.Organization;
 import org.janusproject.kernel.crio.core.Role;
-import org.janusproject.kernel.message.Message;
-import org.janusproject.kernel.crio.core.Organization;
-import org.janusproject.kernel.crio.core.Role;
-import org.janusproject.kernel.crio.core.RoleAddress;
-import org.janusproject.kernel.crio.organization.Group;
-import org.janusproject.kernel.crio.organization.GroupCondition;
-import org.janusproject.kernel.crio.organization.GroupEvent;
-import org.janusproject.kernel.crio.organization.GroupListener;
-import org.janusproject.kernel.crio.organization.MembershipService;
-import org.janusproject.kernel.crio.role.RolePlayingEvent;
-import org.janusproject.kernel.crio.role.RolePlayingListener;
-import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.network.NetworkAdapter;
 import org.janusproject.kernel.repository.Repository;
-import org.janusproject.kernel.repository.RepositoryChangeEvent;
-import org.janusproject.kernel.repository.RepositoryChangeListener;
-import org.janusproject.kernel.repository.RepositoryChangeEvent.ChangeType;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
-import org.janusproject.kernel.util.sizediterator.SizedIterator;
-import org.janusproject.kernel.util.throwable.Throwables;
 
 public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 
@@ -59,6 +39,8 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 	private Collection<Class<? extends Role>> roleList;
 	private CollecteurAgent collecteur = new CollecteurAgent();
 	
+
+	
 	public Boolean getGuiEnabled() {
 		
 		return guiEnabled;
@@ -66,10 +48,92 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 
 	public void setGuiEnabled(Boolean guiEnabled) {
 		this.guiEnabled = guiEnabled;
+		if(guiEnabled) {
+			getOrCreateGroup(OrganizationController.class);
+			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
+			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
+			frame.setVisible(true);
+		}
 	}
 
-	MonitoredKernelAgent(AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
+	MonitoredKernelAgent(Boolean guiB, AgentActivator activator, Boolean commitSuicide, EventListener startUpListener, String applicationName, NetworkAdapter networkAdapter) {
+
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
+		guiEnabled = guiB;
+		Field or = null;
+		Class c = null;
+		try {
+			or = CRIOContext.class.getDeclaredField("or");
+			or.setAccessible(true);
+			Field modifier = Field.class.getDeclaredField("modifiers");
+			modifier.setAccessible(true);
+			System.out.println("OR MODIFIER:" + or.getModifiers());
+			try {
+//				modifier.setInt(or, or.getModifiers() & ~Modifier.FINAL);
+//				modifier.setInt(or, or.getModifiers() & ~Modifier.PRIVATE);
+				modifier.setInt(or, Modifier.PUBLIC);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("OR MODIFIER:" + or.getModifiers());
+			System.out.println("OR MODIFIER PRIVATE VALUE:" + Modifier.PUBLIC);
+			
+			c = or.getDeclaringClass();
+			
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		or.setAccessible(true);
+		
+		//OrganizationRepository repoOrg = this.getCRIOContext().or;
+		if(or != null) {
+			
+			System.out.println("OR:" + or.getClass());
+			System.out.println("OR CLASS:" + c);
+			
+		}
+		Object repo = null; 
+		try {
+			repo = or.get(((CRIOContext)getCRIOContext()));
+			System.out.println("REPO:" + repo);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Method values = null;
+		Collection <Organization> orgs = null;
+		
+		try {
+			values = or.getType().getMethod("values", null);
+			print("Method: " + values);
+			orgs = (Collection<Organization>) values.invoke(repo);
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		//getAgentRepository().
 		
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
@@ -84,7 +148,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
-		
 
 	}
 	

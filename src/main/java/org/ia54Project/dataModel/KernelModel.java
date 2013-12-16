@@ -6,10 +6,38 @@ import java.util.Vector;
 import org.janusproject.kernel.address.AgentAddress;
 
 public class KernelModel {
-	private String name;
+	private String kname;
 	private AgentAddress kernelAddress;
 	private Collection<OrganizationModel> orgList;
 	private Collection<AgentModel> lonelyAgentList;
+	
+	public KernelModel(AgentAddress kernelAddress) {
+		setName("Not fully initialized");
+		setKernelAddress(kernelAddress);
+		setOrgList(new Vector<OrganizationModel>());
+		setLonelyAgentList(new Vector<AgentModel>());
+		
+	}
+	
+	public KernelModel(String kname, AgentAddress kernelAddress) {
+		setName(kname);
+		setKernelAddress(kernelAddress);
+		setOrgList(new Vector<OrganizationModel>());
+		setLonelyAgentList(new Vector<AgentModel>());
+	}
+	
+	public KernelModel(String kname, AgentAddress kernelAddress,
+			Collection<OrganizationModel> orgList,
+			Collection<AgentModel> lonelyAgentList) {
+		setName(kname);
+		setKernelAddress(kernelAddress);
+		setOrgList(orgList);
+		setLonelyAgentList(lonelyAgentList);
+	}
+
+	public KernelModel() {
+		
+	}
 	
 	public Collection<OrganizationModel> getOrgList() {
 		return orgList;
@@ -26,22 +54,12 @@ public class KernelModel {
 	public void setLonelyAgentList(Collection<AgentModel> lonelyAgentList) {
 		this.lonelyAgentList = lonelyAgentList;
 	}
-
-	public KernelModel() {
-		orgList = new Vector<OrganizationModel>();
-		lonelyAgentList = new Vector<AgentModel>();
-	}
-	
-	public KernelModel(String name, AgentAddress kernelAddress) {
-		this.name = name;
-		this.kernelAddress = kernelAddress;
-	}
 	
 	public String getName() {
-		return name;
+		return kname;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String kname) {
+		this.kname = kname;
 	}
 	public AgentAddress getKernelAddress() {
 		return kernelAddress;

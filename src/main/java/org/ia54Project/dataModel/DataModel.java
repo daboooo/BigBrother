@@ -38,12 +38,12 @@ public class DataModel {
 
 
 	public DataModel() {
-
+		content = new Vector<MachineModel>();
 	}
 
 	public DataModel(Collection<MachineModel> content) {
 		super();
-		this.content = content;
+		setContent(content);
 	}
 
 	

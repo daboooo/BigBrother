@@ -1,19 +1,32 @@
 package org.ia54Project.dataModel;
 
 import java.util.Collection;
+import java.util.Vector;
 
 public class MachineModel {
+	
 	String name;
 	String ip;
 	Collection<KernelModel> kernelList;
 
 
 	public MachineModel() {
+		setName("Not fully initialized");
+		setIp("Not fully initialized");
+		setKernelList(new Vector<KernelModel>());
 	}
 
 	public MachineModel(String name, String ip) {
-		this.name = name;
-		this.ip = ip;
+		setName(name);
+		setIp(ip);
+		setKernelList(new Vector<KernelModel>());
+	}
+	
+	public MachineModel(String name, String ip,
+			Collection<KernelModel> kernelList) {
+		setName(name);
+		setIp(ip);
+		setKernelList(kernelList);
 	}
 	
 	public String getName() {

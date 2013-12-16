@@ -20,7 +20,7 @@ import javax.swing.JTabbedPane;
 import org.arakhne.afc.vmutil.locale.Locale;
 import org.ia54Project.BigBrotherUtil;
 import org.ia54Project.agent.BigBrotherChannel;
-import org.ia54Project.dataModel.DataModel;
+import org.ia54Project.swingGUI.view.BigBrotherStandardView;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.crio.core.GroupAddress;
@@ -42,7 +42,7 @@ public class BigBrotherFrame extends JFrame implements ActionListener{
 		assert(bbChannelArg!=null);
 		this.bbChannel = new WeakReference<BigBrotherChannel>(bbChannelArg);
 		setTitle("BigBrother Monitor UI"); //$NON-NLS-1$
-		setPreferredSize(new Dimension(800, 600));		
+		setPreferredSize(new Dimension(1300, 600));		
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent winEvt) {

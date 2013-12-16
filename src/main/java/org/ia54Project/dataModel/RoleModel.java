@@ -16,8 +16,14 @@ public class RoleModel {
 	Boolean isSleeping;
 	Collection<AgentModel> playerList;
 	
-	public RoleModel() {
-		
+	public RoleModel(RoleAddress roleAddress, GroupAddress groupAddress, Class<? extends Role> classe) {
+		this.classe = classe;
+		this.roleAddress = roleAddress;
+		this.groupAdress = groupAddress;
+		hasMesage = false;
+		isReleased = false;
+		isSleeping = false;
+		playerList = new Vector<AgentModel>();
 	}
 	
 	public RoleModel(Class<? extends Role> classe) {

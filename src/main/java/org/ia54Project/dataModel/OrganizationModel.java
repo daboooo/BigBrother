@@ -1,5 +1,6 @@
 package org.ia54Project.dataModel;
 
+import java.util.Collection;
 import java.util.Vector;
 
 import org.janusproject.kernel.crio.core.Organization;
@@ -7,22 +8,20 @@ import org.janusproject.kernel.crio.core.Organization;
 public class OrganizationModel {
 	private Class<? extends Organization> classe;
 	private Integer nbInstance;
-	private Vector<GroupModel> groupList;
+	private Collection<GroupModel> groupList;
 
-	public OrganizationModel() {
-		
-	}
 
 	public OrganizationModel(Class<? extends Organization> classe) {
 		setClasse(classe);
+		setNbInstance(0);
+		setGroupList(new Vector<GroupModel>());
 	}
 
 	public OrganizationModel(Organization organization, GroupModel groupModel) {
-		groupList = new Vector<GroupModel>();
-		groupList.add(groupModel);
-		
-		classe = organization.getClass();
-		nbInstance = organization.getGroupCount();
+		setGroupList( new Vector<GroupModel>());
+		getGroupList().add(groupModel);
+		setClasse(organization.getClass());
+		setNbInstance(organization.getGroupCount());
 	}
 
 	public Class<? extends Organization> getClasse() {
@@ -41,7 +40,7 @@ public class OrganizationModel {
 		this.nbInstance = nbInstance;
 	}
 
-	public Vector<GroupModel> getGroupList() {
+	public Collection<GroupModel> getGroupList() {
 		return groupList;
 	}
 	
