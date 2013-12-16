@@ -2,6 +2,7 @@ package org.ia54Project.organization;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.Timer;
@@ -16,6 +17,7 @@ import org.ia54Project.dataModel.DataModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageDataModel;
+import org.ia54Project.dataModel.MessageMachineModel;
 import org.janusproject.kernel.address.Address;
 import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.channels.Channel;
@@ -31,13 +33,15 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 	private final BigBrotherChannelImpl bbChannel = new BigBrotherChannelImpl();
 	private DataModel bufferedAppInfo = new DataModel(); // linked to the GUI
 	private DataModel processAppInfo = new DataModel(); // used to get all informations
-	private State state = State.SENDING;
+
+	
+	
+	private State state = State.SLEEPING;
 	private State beforePauseState = state;
 	private Timer timer;
+	private long waitResponsesTime = 1000; // in ms
+	private long startingTime;
 	private TimerTask task;
-	
-	
-	
 	@Override
 	public Status end() {
 		task.cancel();
@@ -75,11 +79,53 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 			}
 		};
 		timer.schedule(task, 500, 20);
+	
 		return super.activate(params);
 	}
 	
+
 	@Override
 	public Status live() {
+		switch(state) {
+		case SENDING:
+			Message requestInfo = new StringMessage("request");
+			Message response = null;
+			print("sending request");
+			broadcastMessage(RoleControlManager.class, requestInfo);
+			processAppInfo = new DataModel(new Vector<MachineModel>());
+			startingTime = System.currentTimeMillis();
+			print("startingTime = " + startingTime);
+			state = State.WAITING_RESPONSE;
+		break;
+		case WAITING_RESPONSE:
+			if(System.currentTimeMillis() - startingTime < waitResponsesTime) {
+				response = getMessage();
+				if(response != null) {
+					if(response instanceof MessageMachineModel) {
+						// we got a response
+						MachineModel mmreceived = ((MessageMachineModel) response).getContent();
+						print("got response from ip = " + mmreceived.getIp());
+								// check if we already received from this machine
+						for (MachineModel machineModel : processAppInfo.getContent()) {
+							if(machineModel.getIp().equals(mmreceived.getIp())) {
+								// we already got response from this machine, add the kernel to the collection
+								machineModel.getKernelList().add(((Vector<KernelModel>) mmreceived.getKernelList()).get(0));
+								print("Doublon number of k:" + machineModel.getKernelList().size() );
+								return null;
+							}
+						}
+						// new machine ! We add it to the dataModel
+						processAppInfo.getContent().add(mmreceived);
+					}
+				}
+			} else {
+				swapGUIBuffers();
+				state = State.SLEEPING;
+			}
+		break;
+		default:
+			
+		}
 		return null;
 	}
 	
@@ -133,30 +179,8 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 	// get all informations by sending request
 	// once the last request is completed, swap the informations in bufferedAppInfo for the GUI
 	public void loadMachineInfos() {
-		switch(state) {
-		case SENDING:
-			Message requestInfo = new StringMessage("request");
-			Message response = null;
-			state = State.WAITING_RESPONSE;
-			print("sending request");
-			sendMessage(RoleControlManager.class, requestInfo);
-		break;
-		case WAITING_RESPONSE:
-			response = getMessage();
-			if(response != null) {
-				if(response instanceof MessageDataModel) {
-					// we got a response
-					print("got response");
-					processAppInfo = MessageDataModel.class.cast(response).getContent();
-					swapGUIBuffers();
-					state = State.SENDING;
-					
-				}
-			}
-		break;
-		default:
-			
-		}
+		if(state == State.SLEEPING)
+			state = State.SENDING;
 		
 	}
 
@@ -185,15 +209,15 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 		return bufferedAppInfo;
 	}
 
-	public void setBufferedAppInfo(DataModel bufferedAppInfo) {
+	public synchronized void setBufferedAppInfo(DataModel bufferedAppInfo) {
 		this.bufferedAppInfo = bufferedAppInfo;
 	}
 
-	public DataModel getProcessAppInfo() {
+	public synchronized DataModel getProcessAppInfo() {
 		return processAppInfo;
 	}
 
-	public void setProcessAppInfo(DataModel processAppInfo) {
+	public synchronized void setProcessAppInfo(DataModel processAppInfo) {
 		this.processAppInfo = processAppInfo;
 	}
 

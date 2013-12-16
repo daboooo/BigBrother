@@ -1,12 +1,20 @@
 package org.ia54Project.dataModel;
 
+import java.util.Collection;
 import java.util.Vector;
+
+import javax.management.relation.RoleList;
 
 import org.janusproject.kernel.crio.core.GroupAddress;
 
 public class GroupModel {
 	private GroupAddress groupAddress;
-	private Vector<RoleModel> roleList;
+	private Collection<RoleModel> roleList;
+	
+	public GroupModel(GroupAddress groupAddress) {
+		roleList = new Vector<RoleModel>();
+		this.groupAddress = groupAddress;
+	}
 
 	public GroupAddress getGroupAddress() {
 		return groupAddress;
@@ -16,11 +24,8 @@ public class GroupModel {
 		this.groupAddress = groupAddress;
 	}
 
-	public GroupModel() {
 
-	}
-
-	public Vector<RoleModel> getRoleList() {
+	public Collection<RoleModel> getRoleList() {
 		return roleList;
 	}
 

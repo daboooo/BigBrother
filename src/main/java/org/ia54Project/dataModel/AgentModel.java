@@ -20,13 +20,19 @@ public class AgentModel {
 	private Vector<String> listOfRole;
 
 	
-	public AgentModel() {
-		
+	public AgentModel(AgentAddress address, AgentAddress creator) {
+		setAddress(address);
+		setCreationDate(0);
+		setCreatorAddress(creator);
+		setIsAlive(false);
+		setIsCompound(false);
+		setIsHeavyAgent(false);
+		setIsRecruitementAllowed(false);
+		setIsSleeping(false);
+		setListOfRole( new Vector<String>());
+		setName("Not fully initialized");
 	}
 
-	public AgentModel(String name) {
-		setName(name);
-	}
 
 	
 	public AgentModel(String name, AgentAddress adr) {

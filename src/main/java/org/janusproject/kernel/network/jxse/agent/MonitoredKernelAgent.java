@@ -155,7 +155,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
-		
 
 	}
 	

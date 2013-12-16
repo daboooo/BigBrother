@@ -97,7 +97,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 			for (MachineModel machineModel : vmm) {
 				DefaultMutableTreeNode machineNode = new DefaultMutableTreeNode(machineModel);
 				root.add(machineNode);
-				System.out.println("TREEE");
+				//System.out.println("TREEE");
 				TreeUtil.buildKernelModelNode(machineNode, machineModel);
 			}
 		}
@@ -108,7 +108,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 
 	
 	public void onDataChange(BigBrotherDataChangeEvent evt) {
-		printDebugStuff(data);
+		//printDebugStuff(data);
 		rebuildTree();
 		updateDetailView();
 	}
@@ -126,13 +126,11 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 			if(treeSelectionAddress instanceof AgentAddress) {
 				// search in kernels
 				Collection<KernelModel>  allKernels = data.getAllKernels();
-				System.out.println("address selected: " + treeSelectionAddress);
 				if(allKernels != null) {
 
 					System.out.println(" !  ALL Kernel : " + allKernels);
 					for (KernelModel kernelModel : allKernels) {
 						if(treeSelectionAddress == kernelModel.getKernelAddress()) {
-							System.out.println("address setted: " + kernelModel.getKernelAddress());
 							((BigBrotherKernelView) detailView).setModel(kernelModel);
 							return;
 						}
@@ -140,13 +138,10 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 				}
 				// search in normal agent
 				Collection<AgentModel>  allAgents = data.getAllAgents();
-				System.out.println("address selected: " + treeSelectionAddress);
 				if(allAgents != null) {
-
-					System.out.println(" !  ALL AGENT : " + allAgents);
+					
 					for (AgentModel agentModel : allAgents) {
 						if(treeSelectionAddress == agentModel.getAddress()) {
-							System.out.println("address setted: " + agentModel.getAddress());
 							((BigBrotherAgentView) detailView).setModel(agentModel);
 							return;
 						}
@@ -154,13 +149,11 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 				}
 			} else if(treeSelectionAddress instanceof RoleAddress) {
 				Collection<RoleModel>  allRoles = data.getAllRoles();
-				System.out.println("ROLEaddress selected: " + treeSelectionAddress);
 				if(allRoles != null) {
 
 					System.out.println(" !  ALL ROLE : " + allRoles);
 					for (RoleModel roleModel : allRoles) {
 						if(treeSelectionAddress == roleModel.getRoleAddress()) {
-							System.out.println("address setted: " + roleModel.getRoleAddress());
 							((BigBrotherRoleView) detailView).setModel(roleModel);
 							return;
 						}
@@ -169,13 +162,11 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 			} else if(treeSelectionAddress instanceof String) {
 				// Search in machines using ip address
 				Collection<MachineModel>  allMachines = data.getAllMachines();
-				System.out.println("Machine address selected: " + treeSelectionAddress);
 				if(allMachines != null) {
 					
 					System.out.println(" !  ALL HOSTS : " + allMachines);
 					for (MachineModel machineModel : allMachines) {
 						if(treeSelectionAddress.equals(machineModel.getIp())) {
-							System.out.println("address setted: " + machineModel.getIp());
 							((BigBrotherMachineView) detailView).setModel(machineModel);
 							return;
 						}
@@ -196,10 +187,8 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 			} else if(treeSelectionAddress instanceof GroupAddress) {
 				Collection<GroupModel> allGroups = data.getAllGroups();
 				if(allGroups != null) {
-					System.out.println(" !  ALL GROUP : " + allGroups);
 					for (GroupModel groupModel : allGroups) {
 						if(treeSelectionAddress == groupModel.getGroupAddress()) {
-							System.out.println("address setted: " + groupModel.getGroupAddress());
 							((BigBrotherGroupView) detailView).setModel(groupModel);
 							return;
 						}
@@ -210,7 +199,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	}
 
 	public void updateOnSelectDetailView(Object treeSelection) {
-		System.out.println("updt");
 		if(treeSelection != null) {
 			if(treeSelection instanceof AgentModel) {
 				System.out.println("updt AGENTMODEL");
@@ -233,7 +221,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					removeDetailViewIfExists();
 					detailView = new BigBrotherRoleView(RoleModel.class.cast(treeSelection));
 					rightPane.add(detailView);
-					System.out.println("updt ROLEMODEL");
 					this.setVisible(true);
 				}
 				treeSelectionAddress = ((RoleModel) treeSelection).getRoleAddress();
@@ -244,7 +231,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					removeDetailViewIfExists();
 					detailView = new BigBrotherKernelView(KernelModel.class.cast(treeSelection));
 					rightPane.add(detailView);
-					System.out.println("updt ROLEMODEL");
 					this.setVisible(true);
 				}
 				treeSelectionAddress = ((KernelModel) treeSelection).getKernelAddress();
@@ -255,7 +241,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					removeDetailViewIfExists();
 					detailView = new BigBrotherMachineView(MachineModel.class.cast(treeSelection));
 					rightPane.add(detailView);
-					System.out.println("updt HOSTS");
 					this.setVisible(true);
 				}
 				treeSelectionAddress = ((MachineModel) treeSelection).getIp();
@@ -266,7 +251,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					removeDetailViewIfExists();
 					detailView = new BigBrotherOrganizationView(OrganizationModel.class.cast(treeSelection));
 					rightPane.add(detailView);
-					System.out.println("updt HOSTS");
 					this.setVisible(true);
 				}
 				treeSelectionAddress = ((OrganizationModel) treeSelection).toString();
@@ -277,7 +261,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					removeDetailViewIfExists();
 					detailView = new BigBrotherGroupView(GroupModel.class.cast(treeSelection));
 					rightPane.add(detailView);
-					System.out.println("updt HOSTS");
 					this.setVisible(true);
 				}
 				treeSelectionAddress = ((GroupModel) treeSelection).getGroupAddress();
@@ -316,7 +299,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 						DefaultMutableTreeNode node = DefaultMutableTreeNode.class.cast(component);
 						if(node != null) {
 							Object treeSelection = node.getUserObject();
-							System.out.println("Select " + treeSelection);
 							updateOnSelectDetailView(treeSelection);
 						}
 					}

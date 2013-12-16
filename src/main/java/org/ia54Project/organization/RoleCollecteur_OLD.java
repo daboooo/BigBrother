@@ -74,11 +74,11 @@ public class RoleCollecteur_OLD extends Role implements RepositoryChangeListener
 				Repository<AgentAddress, Agent> repository = (Repository<AgentAddress, Agent>) res;
 				Collection<AgentAddress> agentAddresses = repository.identifiers();
 				
-				RoleModel roleModele = new RoleModel();
+				RoleModel roleModele = new RoleModel(null);
 				
 				
 				for (AgentAddress agentAddress : agentAddresses) {
-					AgentModel agentModel = new AgentModel();
+					AgentModel agentModel = new AgentModel(null);
 					Vector<String> listOfRoles = new Vector<String>();
 					Agent agent = repository.get(agentAddress);
 					Collection<GroupAddress> groupAddresses = agent.getGroups();
@@ -101,10 +101,10 @@ public class RoleCollecteur_OLD extends Role implements RepositoryChangeListener
 					
 					for (GroupAddress groupAddress : groupAddresses) {
 						Group group = getGroupObject(groupAddress);
-						GroupModel groupModel = new GroupModel();
+						GroupModel groupModel = new GroupModel(null);
 						
 						Organization organization = group.getOrganization();
-						OrganizationModel organizationModel = new OrganizationModel();
+						OrganizationModel organizationModel = new OrganizationModel(null);
 						organizationModel.setNbInstance(organization.getGroupCount());
 						organizations.add(organizationModel);
 						
