@@ -18,7 +18,11 @@ import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageDataModel;
 import org.ia54Project.dataModel.MessageMachineModel;
+import org.ia54Project.dataModel.MessageOrder;
+import org.ia54Project.dataModel.Order;
+import org.ia54Project.dataModel.OrderType;
 import org.janusproject.kernel.address.Address;
+import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.channels.Channel;
 import org.janusproject.kernel.channels.ChannelInteractable;
@@ -93,7 +97,7 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 								if(!kList.isEmpty()) {
 									machineModel.getKernelList().add(kList.firstElement());
 								}
-								BigBrotherUtil.printMachineModel(machineModel);
+								//BigBrotherUtil.printMachineModel(machineModel);
 								return null;
 							}
 						}
@@ -126,6 +130,11 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 			
 		}
 
+		public void buildAndSendKill(AgentAddress agent) {
+			Order order = new Order(agent,OrderType.KILL);
+			sendMessage(RoleControlManager.class, new MessageOrder(order));
+		}
+		
 		public Address getChannelOwner() {
 			return getAddress();
 		}

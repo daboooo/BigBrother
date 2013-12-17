@@ -6,8 +6,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.EventListener;
+
 import org.ia54Project.agent.BigBrotherGUIAgent;
+import org.ia54Project.agent.BigBrotherTestAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
+import org.ia54Project.organization.CapacityKillAgent;
 import org.ia54Project.organization.OrganizationController;
 import org.ia54Project.organization.OrganizationManager;
 import org.ia54Project.organization.RoleCollecteur;
@@ -18,6 +21,7 @@ import org.ia54Project.swingGUI.BigBrotherFrame;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;
+import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.capacity.CapacityImplementation;
 import org.janusproject.kernel.crio.capacity.CapacityImplementationType;
@@ -25,6 +29,7 @@ import org.janusproject.kernel.crio.core.CRIOContext;
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.Organization;
 import org.janusproject.kernel.crio.core.Role;
+import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.network.NetworkAdapter;
 import org.janusproject.kernel.repository.Repository;
 import org.janusproject.kernel.status.Status;
@@ -38,7 +43,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 	private Boolean guiEnabled = false;	
 	private Collection<Class<? extends Role>> roleList;
 	private CollecteurAgent collecteur = new CollecteurAgent();
-	
+	private BigBrotherTestAgent testy;
 
 	
 	public Boolean getGuiEnabled() {
@@ -63,25 +68,29 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
+		testy = new BigBrotherTestAgent();
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(collecteur,"CollecteurAgent");
 		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
-
+		launchHeavyAgent(testy, "TEST AGENT");
+		
+		
 		if(this.guiEnabled) {
 			getOrCreateGroup(OrganizationController.class);
 			AgentAddress gui = launchHeavyAgent(new BigBrotherGUIAgent(), "GUI Agent");
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
-
+		
 	}
 	
 	@Override
 	public Status live() {
 		
 		//launchHeavyAgent(new ExecutantAgent(), "Agent");
-		
+		if(testy != null)
+			kill(testy.getAddress());
 		return super.live();
 	}
 
@@ -117,7 +126,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		@Override
 		public Status live() {
 			//print("je prend le role Manager");
-
 //			Organization org = getOrganization(OrganizationController.class);
 //			print(org);
 //			Collection<Class<? extends Role>> roles = org.getDefinedRoles();
@@ -138,7 +146,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 //						print("fu2");
 //				}
 //			}
-			
+
 			return super.live();
 		}
 	}
@@ -149,7 +157,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		private static final long serialVersionUID = 2117008922411038447L;
 
 		public Status activate(Object... parameters) {
-			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
+			getCapacityContainer().addCapacity(new CapacityImplKillAgent());
 			
 			if (requestRole(RoleExecutant.class,OrganizationManagerAddress)==null) {
 				throw new IllegalArgumentException("RoleExecutant");
@@ -160,8 +168,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		
 		@Override
 		public Status live() {
-			//print("je prend le role Executant");
-			
 			return super.live();
 		}
 	}
@@ -224,6 +230,21 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		}
 	}
 
+	private class CapacityImplKillAgent extends CapacityImplementation implements CapacityKillAgent{
+
+		public CapacityImplKillAgent() {
+			super(CapacityImplementationType.DIRECT_ACTOMIC);
+		}
+		
+		@Override
+		public void call(CapacityContext call) throws Exception {
+			AgentAddress toKill = (AgentAddress)call.getInputValueAt(0);
+			kill(toKill);
+		}
+		
+	}
+	
+	
 
 	
 	

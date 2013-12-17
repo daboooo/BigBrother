@@ -28,7 +28,12 @@ public class BigBrotherUtil {
 //			kernel.getExistingGroup(OrganizationController.class);
 //			kernel.
 			BigBrotherChannel channel = kernel.getChannelManager().getChannel(guiAgentAddress,gadr,RoleGUIManager.class,BigBrotherChannel.class);
-			if (channel!=null) return channel;
+			if (channel!=null) {
+				return channel; 
+			} else {
+				return getChannelForGUI(guiAgentAddress, gadr);
+			}
+
 		}
 		throw new IllegalStateException("no BigBrother channel for role GUIMANAGER"); //$NON-NLS-1$
 	}

@@ -7,6 +7,8 @@ import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageMachineModel;
+import org.ia54Project.dataModel.MessageOrder;
+import org.ia54Project.dataModel.Order;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.janusproject.kernel.agentsignal.Signal;
 import org.janusproject.kernel.agentsignal.SignalListener;
@@ -54,6 +56,12 @@ public class RoleManager  extends Role{
 		public void onSignal(Signal signal) {
 			if(signal.getName().equals("SIGNAL_REQUEST")) {
 				sendMessage(RoleCollecteur.class, new StringMessage("request"));
+			} else if(signal.getName().equals("ORDER_REQUEST")) {
+				// forward to the executant
+				Object order =  signal.getValues()[0];
+				if(order instanceof MessageOrder) {
+					sendMessage(RoleExecutant.class, (Message) order);
+				}
 			}
 		}
 	}

@@ -5,6 +5,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -18,12 +20,14 @@ import javax.swing.table.DefaultTableModel;
 import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.swingGUI.view.BigBrotherDetailView;
 
-public class BigBrotherAgentView extends BigBrotherDetailView{
+public class BigBrotherAgentView extends BigBrotherDetailView {
 
 	private JPanel panelDetailView;
 	private JTable tableRolesList;
 	private JTable tableValues;
 	private JTable tableDesc;
+	private AgentModel am;
+	private ActionListener actListener;
 
 	/**
 	 * Create the application.
@@ -32,15 +36,15 @@ public class BigBrotherAgentView extends BigBrotherDetailView{
 		initialize();
 	}
 	
-	public BigBrotherAgentView(AgentModel agent) {
+	public BigBrotherAgentView(AgentModel agent, ActionListener listener) {
+		actListener = listener;
 		initialize();
 		setModel(agent);
 		setVisible(true);
-		System.out.println("construct");
 	}
 	
 	public void setModel(AgentModel agent) {
-		System.out.println("set model");
+		am = agent;
 		Float date = agent.getCreationDate();
 		
 		//tableDesc.getModel().
@@ -123,7 +127,10 @@ public class BigBrotherAgentView extends BigBrotherDetailView{
 		panel.add(panel_2, gbc_panel_2);
 		panel_2.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		JButton btnStop = new JButton("Stop");
+		JButton btnStop = new JButton("Kill");
+		btnStop.setActionCommand("ORDER_KILL");
+		btnStop.addActionListener(actListener);
+		
 		panel_2.add(btnStop);
 		
 		JButton btnPauseresume = new JButton("Pause/Resume");
@@ -215,6 +222,7 @@ public class BigBrotherAgentView extends BigBrotherDetailView{
 			}
 		));
 	}
+
 	
 	
 }

@@ -5,6 +5,7 @@ import java.util.Vector;
 import org.ia54Project.dataModel.BigBrotherListener;
 import org.ia54Project.dataModel.DataModel;
 import org.ia54Project.dataModel.MachineModel;
+import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.channels.Channel;
 
 public interface BigBrotherChannel extends Channel{
@@ -13,4 +14,5 @@ public interface BigBrotherChannel extends Channel{
 	public void addBigBrotherListener(BigBrotherListener listener);
 	public DataModel getData();
 	public void switchPause();
+	public void buildAndSendKill(AgentAddress agent);
 }
