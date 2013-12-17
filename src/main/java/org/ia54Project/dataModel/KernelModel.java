@@ -5,11 +5,17 @@ import java.util.Vector;
 
 import org.janusproject.kernel.address.AgentAddress;
 
-public class KernelModel {
+public class KernelModel implements Cloneable{
 	private String kname;
 	private AgentAddress kernelAddress;
 	private Collection<OrganizationModel> orgList;
 	private Collection<AgentModel> lonelyAgentList;
+	
+	public KernelModel() {
+		setName("Not fully initialized");
+		setOrgList(new Vector<OrganizationModel>());
+		setLonelyAgentList(new Vector<AgentModel>());
+	}
 	
 	public KernelModel(AgentAddress kernelAddress) {
 		setName("Not fully initialized");
@@ -33,12 +39,6 @@ public class KernelModel {
 		setKernelAddress(kernelAddress);
 		setOrgList(orgList);
 		setLonelyAgentList(lonelyAgentList);
-	}
-
-	public KernelModel() {
-		setName("Not fully initialized");
-		setOrgList(new Vector<OrganizationModel>());
-		setLonelyAgentList(new Vector<AgentModel>());
 	}
 	
 	public Collection<OrganizationModel> getOrgList() {
@@ -74,6 +74,17 @@ public class KernelModel {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getName();
+	}
+	
+	public KernelModel clone() {
+		KernelModel kernelModel = new KernelModel();
+		
+		kernelModel.setKernelAddress(this.getKernelAddress());
+		kernelModel.setName(this.getName());
+		kernelModel.setOrgList(new Vector<OrganizationModel>(this.getOrgList()));
+		kernelModel.setLonelyAgentList(new Vector<AgentModel>(this.getLonelyAgentList()));
+		
+		return kernelModel;
 	}
 	
 }

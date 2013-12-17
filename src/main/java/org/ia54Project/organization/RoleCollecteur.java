@@ -66,12 +66,42 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 				Collection<KernelModel> kernelModels = new Vector<KernelModel>();
 				kernelModels.add(kernelModel);
 				machineModel.setKernelList(kernelModels);
-				MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
+				
+				MachineModel newMachineModel = machineModel.clone();
+				clean(newMachineModel);
+				
+				MessageMachineModel messageMachineModel = new MessageMachineModel(newMachineModel);
 				//RoleAddress roleAddress = getRoleAddress(RoleManager.class,message.getSender());
 				sendMessage((RoleAddress) message.getSender(), messageMachineModel);
 			}
 		}
 		return null;
+	}
+	
+	private synchronized void clean(MachineModel machineModel) {
+		Collection<KernelModel> kernelModels = machineModel.getKernelList();
+		if(kernelModels != null) {
+			for (KernelModel kernelModel : kernelModels) {
+				Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+				if(organizationModels != null) {
+					for (OrganizationModel organizationModel : organizationModels) {
+						Collection<GroupModel> groupModels = organizationModel.getGroupList();
+						if(groupModels != null) {
+							if(groupModels.size() == 0) {
+								organizationModels.remove(organizationModel);
+							}
+							else {
+								for (GroupModel groupModel : groupModels) {
+									if(groupModel.getRoleList().size() == 0) {
+										groupModels.remove(groupModel);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	// -------------------- Agents --------------------

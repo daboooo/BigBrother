@@ -5,12 +5,16 @@ import java.util.Vector;
 
 import org.janusproject.kernel.crio.core.Organization;
 
-public class OrganizationModel {
+public class OrganizationModel implements Cloneable{
 	private Class<? extends Organization> classe;
 	private Integer nbInstance;
 	private Collection<GroupModel> groupList;
 
 
+	public OrganizationModel() {
+		setGroupList(new Vector<GroupModel>());
+	}
+	
 	public OrganizationModel(Class<? extends Organization> classe) {
 		setClasse(classe);
 		setNbInstance(0);
@@ -51,6 +55,16 @@ public class OrganizationModel {
 	@Override
 	public String toString() {
 		return getClasse().toString();
+	}
+	
+	public OrganizationModel clone() {
+		OrganizationModel organizationModel = new OrganizationModel();
+		
+		organizationModel.setClasse(this.getClasse());
+		organizationModel.setNbInstance(new Integer(this.getNbInstance()));
+		organizationModel.setGroupList(new Vector<GroupModel>(this.getGroupList()));
+		
+		return organizationModel;
 	}
 
 }

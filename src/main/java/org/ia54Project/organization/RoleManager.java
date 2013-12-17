@@ -42,40 +42,11 @@ public class RoleManager  extends Role{
 		// Donc on envoie un signal contenant ce MessageKernelModel
 		// celui-ci sera récupéré par le role controlManager
 		if(message != null && message instanceof MessageMachineModel) {
-			MachineModel machineModel = ((MessageMachineModel)message).getContent();
-			clean(machineModel);
-			MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
-			Signal signal = new Signal(this, "SIGNAL_RESPONSE", messageMachineModel);
+			Signal signal = new Signal(this, "SIGNAL_RESPONSE", message);
 			getSignalManager().fireSignal(signal);
 		} 
 		
 		return StatusFactory.ok(this);
-	}
-	
-	private void clean(MachineModel machineModel) {
-		Collection<KernelModel> kernelModels = machineModel.getKernelList();
-		if(kernelModels != null) {
-			for (KernelModel kernelModel : kernelModels) {
-				Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
-				if(organizationModels != null) {
-					for (OrganizationModel organizationModel : organizationModels) {
-						Collection<GroupModel> groupModels = organizationModel.getGroupList();
-						if(groupModels != null) {
-							if(groupModels.size() == 0) {
-								organizationModels.remove(organizationModel);
-							}
-							else {
-								for (GroupModel groupModel : groupModels) {
-									if(groupModel.getRoleList().size() == 0) {
-										groupModels.remove(groupModel);
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 	
 	private class MySignalListener implements SignalListener {

@@ -5,7 +5,7 @@ import java.util.Vector;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 
-public class AgentModel {
+public class AgentModel implements Cloneable{
 	// add container for all required agent info
 	private String name;
 	private AgentAddress address;
@@ -33,7 +33,10 @@ public class AgentModel {
 		setName("Not fully initialized");
 	}
 
-
+	public AgentModel() {
+		super();
+		listOfRole = new Vector<String>();
+	}
 	
 	public AgentModel(String name, AgentAddress adr) {
 		setName(name);
@@ -158,4 +161,26 @@ public class AgentModel {
 		// TODO Auto-generated method stub
 		return getName();
 	}
+	
+	public AgentModel clone() {
+		AgentModel agentModel = new AgentModel();
+		
+		agentModel.setAddress(this.getAddress());
+		agentModel.setCanCommitSuicide(new Boolean(this.getCanCommitSuicide()));
+		agentModel.setCreationDate(this.getCreationDate());
+		agentModel.setCreatorAddress(this.getCreatorAddress());
+		agentModel.setIsAlive(new Boolean(this.getIsAlive()));
+		agentModel.setIsCompound(new Boolean(this.getIsCompound()));
+		agentModel.setIsHeavyAgent(new Boolean(this.getIsHeavyAgent()));
+		agentModel.setIsRecruitementAllowed(new Boolean(this.getIsRecruitementAllowed()));
+		agentModel.setIsSleeping(new Boolean(this.getIsSleeping()));
+		agentModel.setListOfRole(new Vector<String>(this.getListOfRole()));
+		agentModel.setName(new String(this.getName()));
+		
+		return agentModel;
+	}
+
+
+
+	
 }

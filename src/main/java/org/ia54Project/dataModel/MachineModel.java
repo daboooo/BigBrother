@@ -5,11 +5,10 @@ import java.util.Vector;
 
 public class MachineModel implements Cloneable{
 	
-	String name;
-	String ip;
-	Collection<KernelModel> kernelList;
-
-
+	private String name;
+	private String ip;
+	private Collection<KernelModel> kernelList;
+	
 	public MachineModel() {
 		setName("Not fully initialized");
 		setIp("Not fully initialized");
@@ -22,8 +21,7 @@ public class MachineModel implements Cloneable{
 		setKernelList(new Vector<KernelModel>());
 	}
 	
-	public MachineModel(String name, String ip,
-			Collection<KernelModel> kernelList) {
+	public MachineModel(String name, String ip, Collection<KernelModel> kernelList) {
 		setName(name);
 		setIp(ip);
 		setKernelList(kernelList);
@@ -42,12 +40,11 @@ public class MachineModel implements Cloneable{
 		this.ip = ip;
 	}
 	
-	
-	public Collection<KernelModel>  getKernelList() {
+	public synchronized Collection<KernelModel> getKernelList() {
 		return kernelList;
 	}
 
-	public void setKernelList(Collection<KernelModel> kernelList) {
+	public synchronized void setKernelList(Collection<KernelModel> kernelList) {
 		this.kernelList = kernelList;
 	}
 	
@@ -55,5 +52,15 @@ public class MachineModel implements Cloneable{
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getName();
+	}
+	
+	public MachineModel clone() {
+		MachineModel machineModel = new MachineModel();
+		
+		machineModel.setIp(new String(this.getIp()));
+		machineModel.setName(new String(this.getName()));
+		machineModel.setKernelList(new Vector<KernelModel>(this.getKernelList()));
+		
+		return machineModel;
 	}
 }
