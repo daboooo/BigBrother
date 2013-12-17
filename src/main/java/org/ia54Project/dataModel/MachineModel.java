@@ -3,13 +3,12 @@ package org.ia54Project.dataModel;
 import java.util.Collection;
 import java.util.Vector;
 
-public class MachineModel {
+public class MachineModel implements Cloneable{
 	
 	private String name;
 	private String ip;
 	private Collection<KernelModel> kernelList;
-
-
+	
 	public MachineModel() {
 		setName("Not fully initialized");
 		setIp("Not fully initialized");
@@ -53,5 +52,15 @@ public class MachineModel {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getName();
+	}
+	
+	public MachineModel clone() {
+		MachineModel machineModel = new MachineModel();
+		
+		machineModel.setIp(new String(this.getIp()));
+		machineModel.setName(new String(this.getName()));
+		machineModel.setKernelList(new Vector<KernelModel>(this.getKernelList()));
+		
+		return machineModel;
 	}
 }

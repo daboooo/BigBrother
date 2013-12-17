@@ -7,7 +7,7 @@ import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.crio.core.RoleAddress;
 
-public class RoleModel {
+public class RoleModel implements Cloneable{
 	Class<? extends Role> classe;
 	RoleAddress roleAddress;
 	GroupAddress groupAdress;
@@ -15,6 +15,10 @@ public class RoleModel {
 	Boolean isReleased;
 	Boolean isSleeping;
 	Collection<AgentModel> playerList;
+	
+	public RoleModel() {
+		playerList = new Vector<AgentModel>();
+	}
 	
 	public RoleModel(RoleAddress roleAddress, GroupAddress groupAddress, Class<? extends Role> classe) {
 		this.classe = classe;
@@ -85,6 +89,20 @@ public class RoleModel {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return getClasse().toString();
+	}
+	
+	public RoleModel clone() {
+		RoleModel roleModel = new RoleModel();
+		
+		roleModel.setClasse(this.getClasse());
+		roleModel.setGroupAdress(this.getGroupAdress());
+		roleModel.setHasMesage(new Boolean(this.getHasMesage()));
+		roleModel.setIsReleased(new Boolean(this.getIsReleased()));
+		roleModel.setIsSleeping(new Boolean(this.getIsSleeping()));
+		roleModel.setPlayerList(new Vector<AgentModel>(this.getPlayerList()));
+		roleModel.setRoleAddress(this.getRoleAddress());
+		
+		return roleModel;
 	}
 	
 }
