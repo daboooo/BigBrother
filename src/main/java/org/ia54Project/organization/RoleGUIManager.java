@@ -104,13 +104,11 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 					if(response instanceof MessageMachineModel) {
 						// we got a response
 						MachineModel mmreceived = ((MessageMachineModel) response).getContent();
-						print("got response from ip = " + mmreceived.getIp());
-								// check if we already received from this machine
+						// check if we already received from this machine
 						for (MachineModel machineModel : processAppInfo.getContent()) {
 							if(machineModel.getIp().equals(mmreceived.getIp())) {
 								// we already got response from this machine, add the kernel to the collection
 								machineModel.getKernelList().add(((Vector<KernelModel>) mmreceived.getKernelList()).get(0));
-								print("Doublon number of k:" + machineModel.getKernelList().size() );
 								return null;
 							}
 						}

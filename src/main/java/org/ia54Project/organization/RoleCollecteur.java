@@ -61,8 +61,8 @@ public class RoleCollecteur extends Role implements KernelListener, RolePlayingL
 			String stringMessage = ((StringMessage)message).getContent();
 			if(stringMessage.equals("request")) {
 				MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
-				RoleAddress roleAddress = getRoleAddress(RoleManager.class);
-				sendMessage(roleAddress, messageMachineModel);
+				//RoleAddress roleAddress = getRoleAddress(RoleManager.class,message.getSender());
+				sendMessage((RoleAddress) message.getSender(), messageMachineModel);
 			}
 		}
 		return null;

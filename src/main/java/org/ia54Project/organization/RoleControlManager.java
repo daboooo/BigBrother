@@ -88,7 +88,8 @@ public class RoleControlManager extends Role{
 		break;
 		case SENDING:
 			// send signal to all RoleManager
-			testMode();
+			getSignalManager().fireSignal(new Signal("SIGNAL_REQUEST", "SIGNAL_REQUEST"));
+			//testMode();
 			
 		break;
 		case SLEEPING:
@@ -124,7 +125,7 @@ public class RoleControlManager extends Role{
 			nbSend++;
 			nbSend%=99999;
 			t1 = false;
-			t2 = false;
+			t2 = false; 
 			t3 = false;
 			state= State.LISTENNING;
 		}
@@ -238,8 +239,10 @@ public class RoleControlManager extends Role{
 
 	private class MySignalListener implements SignalListener {
 		public void onSignal(Signal signal) {
-			
-			
+			if(signal.getName().equals("SIGNAL_RESPONSE")) {
+				if(signal.getValueAt(0) instanceof MessageMachineModel)
+					sendMessage(RoleGUIManager.class, (MessageMachineModel) signal.getValueAt(0));
+			}
 		}
 	}
 	

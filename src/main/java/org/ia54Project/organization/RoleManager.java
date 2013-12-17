@@ -34,7 +34,7 @@ public class RoleManager  extends Role{
 	public Status live() {
 		Message message = getMessage();
 		
-		// Si on reçoit un message de type MessageKernelModel c'est qu'il est envoyé par le collecteur
+		// Si on reçoit un message de type MessageMachineModel c'est qu'il est envoyé par le collecteur
 		// Donc on envoie un signal contenant ce MessageKernelModel
 		// celui-ci sera récupéré par le role controlManager
 		if(message != null && message instanceof MessageMachineModel) {
@@ -43,24 +43,30 @@ public class RoleManager  extends Role{
 			MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
 			Signal signal = new Signal(this, "SIGNAL_RESPONSE", messageMachineModel);
 			getSignalManager().fireSignal(signal);
-		}
+		} 
 		
 		return StatusFactory.ok(this);
 	}
 	
 	private void clean(MachineModel machineModel) {
 		Collection<KernelModel> kernelModels = machineModel.getKernelList();
-		for (KernelModel kernelModel : kernelModels) {
-			Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
-			for (OrganizationModel organizationModel : organizationModels) {
-				Collection<GroupModel> groupModels = organizationModel.getGroupList();
-				if(groupModels.size() == 0) {
-					organizationModels.remove(organizationModel);
-				}
-				else {
-					for (GroupModel groupModel : groupModels) {
-						if(groupModel.getRoleList().size() == 0) {
-							groupModels.remove(groupModel);
+		if(kernelModels != null) {
+			for (KernelModel kernelModel : kernelModels) {
+				Collection<OrganizationModel> organizationModels = kernelModel.getOrgList();
+				if(organizationModels != null) {
+					for (OrganizationModel organizationModel : organizationModels) {
+						Collection<GroupModel> groupModels = organizationModel.getGroupList();
+						if(groupModels != null) {
+							if(groupModels.size() == 0) {
+								organizationModels.remove(organizationModel);
+							}
+							else {
+								for (GroupModel groupModel : groupModels) {
+									if(groupModel.getRoleList().size() == 0) {
+										groupModels.remove(groupModel);
+									}
+								}
+							}
 						}
 					}
 				}

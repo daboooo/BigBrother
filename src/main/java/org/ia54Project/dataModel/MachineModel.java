@@ -3,7 +3,7 @@ package org.ia54Project.dataModel;
 import java.util.Collection;
 import java.util.Vector;
 
-public class MachineModel {
+public class MachineModel implements Cloneable{
 	
 	String name;
 	String ip;
@@ -43,7 +43,7 @@ public class MachineModel {
 	}
 	
 	
-	public Collection<KernelModel> getKernelList() {
+	public Collection<KernelModel>  getKernelList() {
 		return kernelList;
 	}
 
