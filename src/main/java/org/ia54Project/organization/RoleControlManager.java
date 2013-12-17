@@ -15,6 +15,8 @@ import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.dataModel.MessageDataModel;
 import org.ia54Project.dataModel.MessageMachineModel;
+import org.ia54Project.dataModel.MessageOrder;
+import org.ia54Project.dataModel.Order;
 import org.ia54Project.dataModel.OrganizationModel;
 import org.ia54Project.dataModel.RoleModel;
 import org.janusproject.kernel.agentsignal.Signal;
@@ -81,6 +83,9 @@ public class RoleControlManager extends Role{
 //							state = State.BUILDING_DATAMODEL;
 //							timer.schedule(sendResponse, timeToRespond);
 						}
+					} else if (m instanceof MessageOrder) {
+						// forward the order to the manager
+						getSignalManager().fireSignal(new Signal(this, "ORDER_REQUEST",m));
 					}
 					
 				}
@@ -88,10 +93,10 @@ public class RoleControlManager extends Role{
 		break;
 		case SENDING:
 			// send signal to all RoleManager
-			getSignalManager().fireSignal(new Signal("SIGNAL_REQUEST", "SIGNAL_REQUEST"));
-			state = State.LISTENNING;
+			//getSignalManager().fireSignal(new Signal("SIGNAL_REQUEST", "SIGNAL_REQUEST"));
+			testMode();
+			//state = State.LISTENNING;
 			//state = State.SLEEPING;
-			//testMode();
 			
 		break;
 		case SLEEPING:

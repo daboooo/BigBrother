@@ -3,6 +3,8 @@ package org.ia54Project.swingGUI.view;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Vector;
@@ -44,7 +46,7 @@ import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.RoleAddress;
 
-public class BigBrotherStandardView extends JSplitPane implements BigBrotherListener, TreeSelectionListener, TreeExpansionListener{
+public class BigBrotherStandardView extends JSplitPane implements BigBrotherListener, TreeSelectionListener, TreeExpansionListener, ActionListener{
 	private static final long serialVersionUID = -1511108527028192641L;
 	private final WeakReference<BigBrotherChannel> bbChannel;
 	private Dimension minimumSize = new Dimension(300,600);
@@ -226,7 +228,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					BigBrotherAgentView.class.cast(detailView).setModel((AgentModel) treeSelection);
 				} else {
 					removeDetailViewIfExists();
-					detailView = new BigBrotherAgentView(AgentModel.class.cast(treeSelection));
+					detailView = new BigBrotherAgentView(AgentModel.class.cast(treeSelection),this);
 					//rightPane.setView(detailView);
 					rightPane.add(detailView);
 					this.setVisible(true);
@@ -330,13 +332,22 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	public void treeCollapsed(TreeExpansionEvent event) {
 		if(!expanding)
 			this.pathSelecteds.remove(event.getPath());
-		System.out.println("COLLAPSE EVT: " +  event.getPath());
+		//System.out.println("COLLAPSE EVT: " +  event.getPath());
 	}
 
 	public void treeExpanded(TreeExpansionEvent event) {
 		if(!expanding)
 			this.pathSelecteds.add(event.getPath());	
-		System.out.println("EXPAND EVT: " + event.getPath());
+		//System.out.println("EXPAND EVT: " + event.getPath());
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if(e.getActionCommand().equals("ORDER_KILL")) {
+			if(treeSelectionAddress instanceof AgentAddress) {
+				bbChannel.get().buildAndSendKill((AgentAddress) treeSelectionAddress);
+			}
+		}
+		
 	}
 
 }
