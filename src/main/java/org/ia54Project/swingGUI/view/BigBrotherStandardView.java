@@ -109,7 +109,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	
 	public void onDataChange(BigBrotherDataChangeEvent evt) {
 		//printDebugStuff(data);
-		rebuildTree();
+		//rebuildTree();
 		updateDetailView();
 	}
 
@@ -117,7 +117,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 
 		((DefaultTreeModel)tree.getModel()).setRoot(buildTree());
 		((DefaultTreeModel)tree.getModel()).reload();
-		TreeUtil.setTreeState(tree, true);
+		//TreeUtil.setTreeState(tree, true);
 	}
 	
 	public void updateDetailView() {

@@ -48,7 +48,7 @@ public class RoleManager  extends Role{
 		return StatusFactory.ok(this);
 	}
 	
-	private void clean(MachineModel machineModel) {
+	private synchronized void clean(MachineModel machineModel) {
 		Collection<KernelModel> kernelModels = machineModel.getKernelList();
 		if(kernelModels != null) {
 			for (KernelModel kernelModel : kernelModels) {

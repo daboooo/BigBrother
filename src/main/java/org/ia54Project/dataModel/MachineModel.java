@@ -3,11 +3,11 @@ package org.ia54Project.dataModel;
 import java.util.Collection;
 import java.util.Vector;
 
-public class MachineModel implements Cloneable{
+public class MachineModel {
 	
-	String name;
-	String ip;
-	Collection<KernelModel> kernelList;
+	private String name;
+	private String ip;
+	private Collection<KernelModel> kernelList;
 
 
 	public MachineModel() {
@@ -22,8 +22,7 @@ public class MachineModel implements Cloneable{
 		setKernelList(new Vector<KernelModel>());
 	}
 	
-	public MachineModel(String name, String ip,
-			Collection<KernelModel> kernelList) {
+	public MachineModel(String name, String ip, Collection<KernelModel> kernelList) {
 		setName(name);
 		setIp(ip);
 		setKernelList(kernelList);
@@ -42,12 +41,11 @@ public class MachineModel implements Cloneable{
 		this.ip = ip;
 	}
 	
-	
-	public Collection<KernelModel>  getKernelList() {
+	public synchronized Collection<KernelModel> getKernelList() {
 		return kernelList;
 	}
 
-	public void setKernelList(Collection<KernelModel> kernelList) {
+	public synchronized void setKernelList(Collection<KernelModel> kernelList) {
 		this.kernelList = kernelList;
 	}
 	
