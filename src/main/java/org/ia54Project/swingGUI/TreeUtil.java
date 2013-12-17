@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.ia54Project.dataModel.AgentModel;
@@ -101,4 +102,87 @@ public class TreeUtil {
 
 
 	}
+	
+	// return the treePath leading to the object to find in the node
+	// the object to find is searched in node and his child 
+	// to determine a node match the object, the test is done between the userContent in the node and the object based on there toString equivalent
+	public static TreePath findInNode(DefaultMutableTreeNode node, Object toFind) {
+		DefaultMutableTreeNode root = node;
+		//System.out.println(root);
+		for (int i = 0; i < root.getChildCount(); i++)
+		{
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
+			System.out.println("search in:" + child.getUserObject());
+			if (child.getUserObject().toString().equals(toFind.toString())) {
+				System.out.println("FOUND");
+				System.out.println("Path :" + child.getPath());
+				return new TreePath(((DefaultMutableTreeNode) child.getParent()).getPath());
+			} else  {
+				if(!root.getChildAt(i).isLeaf())
+					return findInNode((DefaultMutableTreeNode) root.getChildAt(i), toFind);
+			}
+		}
+		return null;	
+	}
+
+	// attempt to expand a tree to a specified path
+	// the given path can be a path from an other tree
+	// the key here is that we consider equals 2 objects when there toString method give the same result
+	public static void attemptToExpandToPath(TreePath pathFromOldTree, JTree newTree) {
+		Object[] objs = pathFromOldTree.getPath();
+		Object rootI = newTree.getModel().getRoot();
+		if(!(rootI instanceof DefaultMutableTreeNode) || objs == null)
+			return;
+		expandIfFound(objs, (DefaultMutableTreeNode) rootI, newTree);
+		
+	}
+	
+	public static void expandIfFound(Object toFind[], DefaultMutableTreeNode node, JTree tree) {
+		if(toFind != null) {
+			if(compareNodeWithObjet(node,toFind[0])) {
+				if(node.isLeaf()) {
+					System.out.println("FOUND EXPAND to :" + node.getPath());
+					tree.expandPath(new TreePath(node.getPath()));
+				} else{
+					if(toFind.length > 1) { // seek in child
+						
+						// build a new table of object to find based on toFind minus the object we found
+						Object[] newToFind = new Object[toFind.length-1];
+						for(int i = 1 ; i< toFind.length ; i++) {
+							newToFind[i-1] = toFind[i];
+						}
+						
+						// search the new table in every child
+						for(int i = 0; i < node.getChildCount(); i++) {
+							expandIfFound(newToFind, (DefaultMutableTreeNode) node.getChildAt(i), tree);
+						}
+					} else { // nothing more to seek for
+						tree.expandPath(new TreePath(node.getPath()));
+					}
+				}
+			} else {
+				
+			}
+		}
+	}
+	
+	// return true if the userObject of node is equals to obj based on toString
+	public static Boolean compareNodeWithObjet(DefaultMutableTreeNode node, Object obj) {
+		System.out.println("compare " + node.getUserObject().toString() + " and: " + obj.toString());
+		return(node.getUserObject().toString().equals(obj.toString())) ;
+	}
+	
+	public static void expandToObject(JTree tree, Object obj) {
+		
+		// step 1: find the object in the current tree
+		System.out.println("TO find:" + obj);
+		TreePath expandPath = findInNode((DefaultMutableTreeNode) tree.getModel().getRoot(), obj);
+		// step2: expand the path to the object
+		if(expandPath != null) {
+			System.out.println("attempt to expand to :" + expandPath);
+			tree.expandPath(expandPath);
+		}
+		
+	}
+	
 }

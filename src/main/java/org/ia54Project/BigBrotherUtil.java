@@ -3,6 +3,7 @@ package org.ia54Project;
 import java.net.InetAddress;
 
 import org.ia54Project.agent.BigBrotherChannel;
+import org.ia54Project.dataModel.MachineModel;
 import org.ia54Project.organization.OrganizationController;
 import org.ia54Project.organization.RoleGUIManager;
 import org.janusproject.kernel.Kernel;
@@ -50,4 +51,12 @@ public class BigBrotherUtil {
 	    }//end try
 	    return addr;
 	  }//
+	
+	public static void printMachineModel(MachineModel mm) {
+		System.out.println("------------------------- DEBUG MM ------------------");
+		System.out.println(mm.getName());
+		System.out.println(mm.getIp());
+		System.out.println(mm.getKernelList());
+		System.out.println("------------------------- DEBUG MM ------------------");
+	}
 }

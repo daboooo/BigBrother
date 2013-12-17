@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.ia54Project.BigBrotherUtil;
+
 public class DataModel {
 	private Collection<MachineModel> content;
 	private List<BigBrotherListener> _listeners = new ArrayList();
@@ -28,7 +30,6 @@ public class DataModel {
 	private synchronized void fireEvent() {
 		BigBrotherDataChangeEvent event = new BigBrotherDataChangeEvent(this);
 		for (BigBrotherListener listener : _listeners) {
-			System.out.println("fired");
 			listener.onDataChange(event);
 			
 		}
@@ -39,6 +40,8 @@ public class DataModel {
 
 	public DataModel() {
 		content = new Vector<MachineModel>();
+		setContent(content);
+		
 	}
 
 	public DataModel(Collection<MachineModel> content) {
@@ -60,34 +63,36 @@ public class DataModel {
 			allMachines.add(machine);
 			if(machine.getKernelList() != null) {
 				for (KernelModel kernel : machine.getKernelList()) {
-					allKernels.add(kernel);
-					if(kernel.getLonelyAgentList() != null) {
-						for(AgentModel lonelyAgent : kernel.getLonelyAgentList()) {
-							allAgents.add(lonelyAgent);
-						}
-						
-						if( kernel.getOrgList() != null) {
-							for(OrganizationModel org : kernel.getOrgList()) {
-								allOrgs.add(org);
-								if(org.getGroupList() != null) {
-									for(GroupModel group: org.getGroupList()) {
-										allGroups.add(group);
-										if(group.getRoleList() != null) {
-											for(RoleModel role: group.getRoleList()) {
-												allRoles.add(role);
-												if(role.getPlayerList() != null) {
-													for(AgentModel agent: role.getPlayerList()) {
-														allAgents.add(agent);
+						allKernels.add(kernel);
+						if(kernel.getLonelyAgentList() != null) {
+							for(AgentModel lonelyAgent : kernel.getLonelyAgentList()) {
+								if(lonelyAgent != null) {
+									allAgents.add(lonelyAgent);
+								}
+							}
+							
+							if( kernel.getOrgList() != null) {
+								for(OrganizationModel org : kernel.getOrgList()) {
+									allOrgs.add(org);
+									if(org.getGroupList() != null) {
+										for(GroupModel group: org.getGroupList()) {
+											allGroups.add(group);
+											if(group.getRoleList() != null) {
+												for(RoleModel role: group.getRoleList()) {
+													allRoles.add(role);
+													if(role.getPlayerList() != null) {
+														for(AgentModel agent: role.getPlayerList()) {
+															allAgents.add(agent);
+														}
 													}
 												}
+												
 											}
-											
 										}
 									}
 								}
 							}
 						}
-					}
 				}
 			}
 		}

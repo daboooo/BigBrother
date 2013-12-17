@@ -69,7 +69,7 @@ public class RoleControlManager extends Role{
 		case LISTENNING:
 			Message m = getMessage();
 			if(m != null) {
-				print("got message:" + m);
+				//print("got message:" + m);
 				RoleAddress guiManager = getRoleAddress(getOrCreateGroup(OrganizationController.class), RoleGUIManager.class, RoleAddress.class.cast(m.getSender()).getPlayer());
 				if(m.getSender() == guiManager ) {
 					if(m instanceof StringMessage) {
@@ -89,6 +89,8 @@ public class RoleControlManager extends Role{
 		case SENDING:
 			// send signal to all RoleManager
 			getSignalManager().fireSignal(new Signal("SIGNAL_REQUEST", "SIGNAL_REQUEST"));
+			state = State.LISTENNING;
+			//state = State.SLEEPING;
 			//testMode();
 			
 		break;
@@ -106,22 +108,22 @@ public class RoleControlManager extends Role{
 		// sending response
 		
 		if(System.currentTimeMillis() - testStartTime > 100 && !t1) {
-			print("sending RESPONSE 1");
-			sendMessage(RoleGUIManager.class, new MessageMachineModel(buildFakeData()));
+			//print("sending RESPONSE 1");
+			sendMessage(RoleGUIManager.class, new MessageMachineModel(buildFakeData(0)));
 			t1 = true;
 			nbSend++;
 			nbSend%=99999;
 		}
 		if(System.currentTimeMillis() - testStartTime > 500 && !t2) {
-			print("sending RESPONSE 2");
-			sendMessage(RoleGUIManager.class, new MessageMachineModel(buildFakeData()));
+			//print("sending RESPONSE 2");
+			sendMessage(RoleGUIManager.class, new MessageMachineModel(buildFakeData(1)));
 			t2 = true;
 			nbSend++;
 			nbSend%=99999;
 		}
 		if(System.currentTimeMillis() - testStartTime > 1200 && !t3) {
-			print("sending RESPONSE 3");
-			sendMessage(RoleGUIManager.class, new MessageMachineModel(buildFakeData()));
+			//print("sending RESPONSE 3");
+			sendMessage(RoleGUIManager.class, new MessageMachineModel(buildFakeData(2)));
 			nbSend++;
 			nbSend%=99999;
 			t1 = false;
@@ -131,22 +133,7 @@ public class RoleControlManager extends Role{
 		}
 	}
 	
-	public DataModel buildDataModel() {
-		DataModel data = new DataModel();
-		data.setContent(buildMachineModels());
-		return data;
-		
-	}
-	
-	public Collection<MachineModel> buildMachineModels(){
-		Collection<MachineModel> machines = new Vector<MachineModel>();
-		MachineModel mm = new MachineModel();
-		
-		return null;
-		
-	}
-	
-	public MachineModel buildFakeData() {
+	public MachineModel buildFakeData(int kernelNumber) {
 		DataModel datam = new DataModel();
 		// MachineModel
 		MachineModel mm = null;
@@ -223,7 +210,7 @@ public class RoleControlManager extends Role{
 		
 		// fake kList
 		Vector<KernelModel> kernelList = new Vector<KernelModel>();
-			KernelModel k = new KernelModel("v"+nbSend+ " :P",Kernels.get().getAddress());
+			KernelModel k = new KernelModel("KernelPro"+kernelNumber,Kernels.get().getAddress());
 			k.setKernelAddress(Kernels.get().getAddress());
 			k.setOrgList(orgList);
 			k.setLonelyAgentList(llAgentList);
@@ -240,8 +227,9 @@ public class RoleControlManager extends Role{
 	private class MySignalListener implements SignalListener {
 		public void onSignal(Signal signal) {
 			if(signal.getName().equals("SIGNAL_RESPONSE")) {
-				if(signal.getValueAt(0) instanceof MessageMachineModel)
+				if(signal.getValueAt(0) instanceof MessageMachineModel) {
 					sendMessage(RoleGUIManager.class, (MessageMachineModel) signal.getValueAt(0));
+				}
 			}
 		}
 	}
