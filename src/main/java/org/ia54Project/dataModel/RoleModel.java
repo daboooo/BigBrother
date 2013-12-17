@@ -99,8 +99,12 @@ public class RoleModel implements Cloneable{
 		roleModel.setHasMesage(new Boolean(this.getHasMesage()));
 		roleModel.setIsReleased(new Boolean(this.getIsReleased()));
 		roleModel.setIsSleeping(new Boolean(this.getIsSleeping()));
-		roleModel.setPlayerList(new Vector<AgentModel>(this.getPlayerList()));
 		roleModel.setRoleAddress(this.getRoleAddress());
+		Vector<AgentModel> newVector = new Vector<AgentModel>();
+		for (AgentModel agentModel : this.getPlayerList()) {
+			newVector.add(agentModel.clone());
+		}
+		roleModel.setPlayerList(newVector);
 		
 		return roleModel;
 	}

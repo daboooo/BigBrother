@@ -59,7 +59,11 @@ public class MachineModel implements Cloneable{
 		
 		machineModel.setIp(new String(this.getIp()));
 		machineModel.setName(new String(this.getName()));
-		machineModel.setKernelList(new Vector<KernelModel>(this.getKernelList()));
+		Vector<KernelModel> newVector = new Vector<KernelModel>();
+		for (KernelModel kernelModel : this.getKernelList()) {
+			newVector.add(kernelModel.clone());
+		}
+		machineModel.setKernelList(newVector);
 		
 		return machineModel;
 	}

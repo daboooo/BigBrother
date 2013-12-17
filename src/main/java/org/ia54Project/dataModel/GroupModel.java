@@ -46,7 +46,11 @@ public class GroupModel implements Cloneable{
 		GroupModel groupModel = new GroupModel();
 		
 		groupModel.setGroupAddress(this.getGroupAddress());
-		groupModel.setRoleList(new Vector<RoleModel>(this.getRoleList()));
+		Vector<RoleModel> newVector = new Vector<RoleModel>();
+		for (RoleModel roleModel : this.getRoleList()) {
+			newVector.add(roleModel.clone());
+		}
+		groupModel.setRoleList(newVector);
 		
 		return groupModel;
 	}

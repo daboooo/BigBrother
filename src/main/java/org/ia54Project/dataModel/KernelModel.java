@@ -81,8 +81,16 @@ public class KernelModel implements Cloneable{
 		
 		kernelModel.setKernelAddress(this.getKernelAddress());
 		kernelModel.setName(this.getName());
-		kernelModel.setOrgList(new Vector<OrganizationModel>(this.getOrgList()));
-		kernelModel.setLonelyAgentList(new Vector<AgentModel>(this.getLonelyAgentList()));
+		Vector<OrganizationModel> newVector = new Vector<OrganizationModel>();
+		for (OrganizationModel organizationModel : this.getOrgList()) {
+			newVector.add(organizationModel.clone());
+		}
+		kernelModel.setOrgList(newVector);
+		Vector<AgentModel> newVector2 = new Vector<AgentModel>();
+		for (AgentModel agentModel : this.getLonelyAgentList()) {
+			newVector2.add(agentModel.clone());
+		}
+		kernelModel.setLonelyAgentList(newVector2);
 		
 		return kernelModel;
 	}

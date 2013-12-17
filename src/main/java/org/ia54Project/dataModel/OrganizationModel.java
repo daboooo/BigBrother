@@ -62,7 +62,12 @@ public class OrganizationModel implements Cloneable{
 		
 		organizationModel.setClasse(this.getClasse());
 		organizationModel.setNbInstance(new Integer(this.getNbInstance()));
-		organizationModel.setGroupList(new Vector<GroupModel>(this.getGroupList()));
+		
+		Vector<GroupModel> newVector = new Vector<GroupModel>();
+		for (GroupModel groupModel : this.getGroupList()) {
+			newVector.add(groupModel.clone());
+		}
+		organizationModel.setGroupList(newVector);
 		
 		return organizationModel;
 	}
