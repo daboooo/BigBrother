@@ -2,6 +2,7 @@ package org.ia54Project.organization;
 
 import java.util.Collection;
 
+import org.ia54Project.BigBrotherUtil;
 import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
@@ -20,7 +21,8 @@ import org.janusproject.kernel.status.StatusFactory;
 
 public class RoleManager  extends Role{
 	private final SignalListener signalListener = new MySignalListener();
-
+	private Boolean parsing = false;
+	
 	@Override
 	public Status activate(Object... parameters) {
 		addObtainCondition(new HasAllRequiredCapacitiesCondition(CapacityGetAgentRepository.class));

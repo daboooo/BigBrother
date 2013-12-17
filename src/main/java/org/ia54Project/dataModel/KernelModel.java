@@ -36,7 +36,9 @@ public class KernelModel {
 	}
 
 	public KernelModel() {
-		
+		setName("Not fully initialized");
+		setOrgList(new Vector<OrganizationModel>());
+		setLonelyAgentList(new Vector<AgentModel>());
 	}
 	
 	public Collection<OrganizationModel> getOrgList() {

@@ -52,25 +52,6 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 	@Override
 	public Status activate(Object... params) {
 		// testing purpose
-		MachineModel m = null;
-		try {
-			m = new MachineModel(BigBrotherUtil.getComputerFullName(),InetAddress.getLocalHost ().getHostAddress ());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		
-		// loading kernel
-		Vector<KernelModel> kernelList = new Vector<KernelModel>();
-		KernelModel k = new KernelModel("toto",Kernels.get().getAddress());
-		kernelList.add(k);
-		m.setKernelList(kernelList);
-		Vector<MachineModel> machineList = new Vector<MachineModel>();
-		machineList.add(m);
-		print("mach infos");
-		bufferedAppInfo.setContent(machineList);
-		
-		
-		
 		timer = new Timer();
 		task = new TimerTask() {
 			@Override
@@ -78,7 +59,7 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 				loadMachineInfos();
 			}
 		};
-		timer.schedule(task, 500, 20);
+		timer.schedule(task, 500, 2000);
 	
 		return super.activate(params);
 	}
@@ -90,11 +71,11 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 		case SENDING:
 			Message requestInfo = new StringMessage("request");
 			Message response = null;
-			print("sending request");
+			//print("sending request");
 			broadcastMessage(RoleControlManager.class, requestInfo);
 			processAppInfo = new DataModel(new Vector<MachineModel>());
 			startingTime = System.currentTimeMillis();
-			print("startingTime = " + startingTime);
+			//print("startingTime = " + startingTime);
 			state = State.WAITING_RESPONSE;
 		break;
 		case WAITING_RESPONSE:
@@ -108,10 +89,15 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 						for (MachineModel machineModel : processAppInfo.getContent()) {
 							if(machineModel.getIp().equals(mmreceived.getIp())) {
 								// we already got response from this machine, add the kernel to the collection
-								machineModel.getKernelList().add(((Vector<KernelModel>) mmreceived.getKernelList()).get(0));
+								Vector<KernelModel> kList = (Vector<KernelModel>) mmreceived.getKernelList();
+								if(!kList.isEmpty()) {
+									machineModel.getKernelList().add(kList.firstElement());
+								}
+								BigBrotherUtil.printMachineModel(machineModel);
 								return null;
 							}
 						}
+						
 						// new machine ! We add it to the dataModel
 						processAppInfo.getContent().add(mmreceived);
 					}
@@ -170,7 +156,7 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 	
 	// swap the buffers and notify the UI
 	public synchronized void swapGUIBuffers() {
-			System.out.println("swap");
+			//System.out.println("swap");
 			bufferedAppInfo.setContent(processAppInfo.getContent());		
 	}
 	

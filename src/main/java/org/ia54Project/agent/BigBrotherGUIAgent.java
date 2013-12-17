@@ -17,7 +17,6 @@ public class BigBrotherGUIAgent extends Agent{
 	@Override
 	public Status activate(Object... parameters) {
 		GroupAddress gaddr = getOrCreateGroup(OrganizationController.class);
-		print("bifck: " + getExistingGroup(OrganizationController.class));
 		if(requestRole(RoleGUIManager.class, gaddr) != null) {
 			return StatusFactory.ok("guiAgent");
 		}
