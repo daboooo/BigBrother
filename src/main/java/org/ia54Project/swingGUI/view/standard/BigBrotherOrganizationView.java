@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,12 +20,14 @@ import org.ia54Project.swingGUI.view.BigBrotherDetailView;
 public class BigBrotherOrganizationView extends BigBrotherDetailView {
 	private JTable tableDesc;
 	private JTable tableValues;
+	private ActionListener listener;
 
 	public BigBrotherOrganizationView() {
 		initialize();
 	}
 	
-	public BigBrotherOrganizationView(OrganizationModel model) {
+	public BigBrotherOrganizationView(OrganizationModel model, ActionListener listener) {
+		this.listener = listener;
 		initialize();
 		setModel(model);
 	}
@@ -73,7 +76,9 @@ public class BigBrotherOrganizationView extends BigBrotherDetailView {
 		panel.add(panel_2, gbc_panel_2);
 		panel_2.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		JButton button = new JButton("Stop");
+		JButton button = new JButton("Kill");
+		button.setActionCommand("ORDER_KILL");
+		button.addActionListener(listener);
 		panel_2.add(button);
 		
 		JButton button_1 = new JButton("Pause/Resume");
