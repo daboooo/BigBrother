@@ -41,7 +41,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 	private CollecteurAgent collecteur = new CollecteurAgent();
 	private BigBrotherTestAgent testy;
 
-	
 	public Boolean getGuiEnabled() {
 		
 		return guiEnabled;
@@ -80,7 +79,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
-		
 	}
 	
 	@Override
@@ -191,9 +189,10 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 			
 			this.setRole(getRole(OrganizationManagerAddress, RoleCollecteur.class));
 			
-			MonitoredKernelAgent.this.addGroupListener(myRole);
-			MonitoredKernelAgent.this.addRolePlayingListener(myRole);
-			MonitoredKernelAgent.this.addKernelListener(myRole);
+//			MonitoredKernelAgent.this.addGroupListener(myRole);
+//			MonitoredKernelAgent.this.addRolePlayingListener(myRole);
+//			MonitoredKernelAgent.this.addKernelListener(myRole);
+			
 			
 			return super.activate(parameters);
 		}

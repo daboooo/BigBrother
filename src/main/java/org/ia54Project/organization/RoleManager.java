@@ -42,7 +42,7 @@ public class RoleManager  extends Role{
 		// Donc on envoie un signal contenant ce MessageKernelModel
 		// celui-ci sera récupéré par le role controlManager
 		if(message != null && message instanceof MessageMachineModel) {
-			BigBrotherUtil.printMachineModel(MessageMachineModel.class.cast(message).getContent());
+			//BigBrotherUtil.printMachineModel(MessageMachineModel.class.cast(message).getContent());
 			Signal signal = new Signal(this, "SIGNAL_RESPONSE", message);
 			getSignalManager().fireSignal(signal);
 		} 

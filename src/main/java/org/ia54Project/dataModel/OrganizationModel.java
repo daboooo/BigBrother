@@ -20,6 +20,12 @@ public class OrganizationModel implements Cloneable{
 		setNbInstance(0);
 		setGroupList(new Vector<GroupModel>());
 	}
+	
+	public OrganizationModel(Organization organization) {
+		setGroupList( new Vector<GroupModel>());
+		setClasse(organization.getClass());
+		setNbInstance(organization.getGroupCount());
+	}
 
 	public OrganizationModel(Organization organization, GroupModel groupModel) {
 		setGroupList( new Vector<GroupModel>());

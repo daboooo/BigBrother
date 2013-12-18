@@ -123,7 +123,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	
 	public void onDataChange(BigBrotherDataChangeEvent evt) {
 		//printDebugStuff(data);
-		//rebuildTree();
+		rebuildTree();
 		updateDetailView();
 	}
 

@@ -31,6 +31,7 @@ public class RoleModel implements Cloneable{
 	}
 	
 	public RoleModel(Class<? extends Role> classe) {
+		playerList = new Vector<AgentModel>();
 		setClasse(classe);
 	}
 	

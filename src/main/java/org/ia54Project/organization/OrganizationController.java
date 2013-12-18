@@ -8,9 +8,6 @@ public class OrganizationController extends Organization{
 	public OrganizationController(CRIOContext crioContext) {
 		super(crioContext);
 		addRole(RoleGUIManager.class);
-		addRole(RoleControlManager.class);
-
-		
+		addRole(RoleControlManager.class);		
 	}
-
 }
