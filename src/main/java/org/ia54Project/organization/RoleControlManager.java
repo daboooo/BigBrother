@@ -93,9 +93,9 @@ public class RoleControlManager extends Role{
 		break;
 		case SENDING:
 			// send signal to all RoleManager
-			//getSignalManager().fireSignal(new Signal("SIGNAL_REQUEST", "SIGNAL_REQUEST"));
-			testMode();
-			//state = State.LISTENNING;
+			getSignalManager().fireSignal(new Signal("SIGNAL_REQUEST", "SIGNAL_REQUEST"));
+			state = State.LISTENNING;
+			//testMode();
 			//state = State.SLEEPING;
 			
 		break;
@@ -233,7 +233,9 @@ public class RoleControlManager extends Role{
 		public void onSignal(Signal signal) {
 			if(signal.getName().equals("SIGNAL_RESPONSE")) {
 				if(signal.getValueAt(0) instanceof MessageMachineModel) {
+					
 					sendMessage(RoleGUIManager.class, (MessageMachineModel) signal.getValueAt(0));
+					
 				}
 			}
 		}

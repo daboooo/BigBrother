@@ -16,7 +16,7 @@ public class BigBrotherTestAgent extends Agent {
 	@Override
 	public Status live() {
 		print("I live MOFO");
-		
+
 		return super.live();
 	}
 	

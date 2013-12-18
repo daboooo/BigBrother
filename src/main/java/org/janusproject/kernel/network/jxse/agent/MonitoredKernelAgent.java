@@ -1,15 +1,14 @@
 package org.janusproject.kernel.network.jxse.agent;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.EventListener;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.ia54Project.agent.BigBrotherGUIAgent;
 import org.ia54Project.agent.BigBrotherTestAgent;
 import org.ia54Project.organization.CapacityGetAgentRepository;
+import org.ia54Project.organization.CapacityGetGroupList;
 import org.ia54Project.organization.CapacityKillAgent;
 import org.ia54Project.organization.OrganizationController;
 import org.ia54Project.organization.OrganizationManager;
@@ -21,15 +20,12 @@ import org.ia54Project.swingGUI.BigBrotherFrame;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.agent.AgentActivator;
-import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.crio.capacity.CapacityContext;
 import org.janusproject.kernel.crio.capacity.CapacityImplementation;
 import org.janusproject.kernel.crio.capacity.CapacityImplementationType;
-import org.janusproject.kernel.crio.core.CRIOContext;
 import org.janusproject.kernel.crio.core.GroupAddress;
-import org.janusproject.kernel.crio.core.Organization;
 import org.janusproject.kernel.crio.core.Role;
-import org.janusproject.kernel.message.Message;
+import org.janusproject.kernel.crio.organization.Group;
 import org.janusproject.kernel.network.NetworkAdapter;
 import org.janusproject.kernel.repository.Repository;
 import org.janusproject.kernel.status.Status;
@@ -66,13 +62,15 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
 		guiEnabled = guiB;
 		
+		System.out.println("je suis le kernel");
+		
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
 		testy = new BigBrotherTestAgent();
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(collecteur,"CollecteurAgent");
-		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
+		//launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
 		launchHeavyAgent(testy, "TEST AGENT");
 		
 		
@@ -89,8 +87,11 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 	public Status live() {
 		
 		//launchHeavyAgent(new ExecutantAgent(), "Agent");
-		if(testy != null)
+		if(testy != null) {
 			kill(testy.getAddress());
+
+			
+		}
 		return super.live();
 	}
 
@@ -182,6 +183,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		@Override
 		public Status activate(Object... parameters) {
 			getCapacityContainer().addCapacity(new CapacityImplGetAgentRepository());
+			getCapacityContainer().addCapacity(new CapacityImplGetGroupList());
 
 			if (requestRole(RoleCollecteur.class,OrganizationManagerAddress)==null) {
 				throw new IllegalArgumentException("RoleCollecteur");
@@ -240,6 +242,25 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		public void call(CapacityContext call) throws Exception {
 			AgentAddress toKill = (AgentAddress)call.getInputValueAt(0);
 			kill(toKill);
+		}
+		
+	}
+	
+	private class CapacityImplGetGroupList extends CapacityImplementation implements CapacityGetGroupList{
+
+		public CapacityImplGetGroupList() {
+			super(CapacityImplementationType.DIRECT_ACTOMIC);
+		}
+		
+		@Override
+		public void call(CapacityContext call) throws Exception {
+			Vector<Group> groups = new Vector<Group>();
+			Iterator<GroupAddress> itgr = getGroupRepository().iterator();
+			while(itgr.hasNext()) {
+				groups.add(getGroupObject(itgr.next()));
+			}
+			call.setOutputValues(groups);
+			
 		}
 		
 	}

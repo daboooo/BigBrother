@@ -42,6 +42,7 @@ public class RoleManager  extends Role{
 		// Donc on envoie un signal contenant ce MessageKernelModel
 		// celui-ci sera récupéré par le role controlManager
 		if(message != null && message instanceof MessageMachineModel) {
+			BigBrotherUtil.printMachineModel(MessageMachineModel.class.cast(message).getContent());
 			Signal signal = new Signal(this, "SIGNAL_RESPONSE", message);
 			getSignalManager().fireSignal(signal);
 		} 
@@ -55,6 +56,7 @@ public class RoleManager  extends Role{
 		// On envoie donc un message au collecteur afin qu'il les recupere
 		public void onSignal(Signal signal) {
 			if(signal.getName().equals("SIGNAL_REQUEST")) {
+				//print("ANY REQUEST MOFO");
 				sendMessage(RoleCollecteur.class, new StringMessage("request"));
 			} else if(signal.getName().equals("ORDER_REQUEST")) {
 				// forward to the executant
