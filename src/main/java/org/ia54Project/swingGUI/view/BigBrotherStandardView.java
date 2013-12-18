@@ -58,6 +58,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	private BigBrotherDetailView detailView;
 	private DataModel data;
 	private Object treeSelectionAddress;
+	private Object treeSelection = null;
 	private TreePath treeLastSelection;
 	private Vector<TreePath> pathSelecteds;
 	private boolean expanding;
@@ -145,26 +146,29 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 		// attempt to retrieve the selected agent and his info
 		if(treeSelectionAddress != null) {
 			if(treeSelectionAddress instanceof AgentAddress) {
-				// search in kernels
-				Collection<KernelModel>  allKernels = data.getAllKernels();
-				if(allKernels != null) {
-
-					//System.out.println(" !  ALL Kernel : " + allKernels);
-					for (KernelModel kernelModel : allKernels) {
-						if(treeSelectionAddress == kernelModel.getKernelAddress()) {
-							((BigBrotherKernelView) detailView).setModel(kernelModel);
-							return;
+				if(treeSelection instanceof KernelModel) {
+					// search in kernels
+					Collection<KernelModel>  allKernels = data.getAllKernels();
+					if(allKernels != null) {
+	
+						//System.out.println(" !  ALL Kernel : " + allKernels);
+						for (KernelModel kernelModel : allKernels) {
+							if(treeSelectionAddress == kernelModel.getKernelAddress()) {
+								((BigBrotherKernelView) detailView).setModel(kernelModel);
+								return;
+							}
 						}
 					}
-				}
-				// search in normal agent
-				Collection<AgentModel>  allAgents = data.getAllAgents();
-				if(allAgents != null) {
-					
-					for (AgentModel agentModel : allAgents) {
-						if(treeSelectionAddress == agentModel.getAddress()) {
-							((BigBrotherAgentView) detailView).setModel(agentModel);
-							return;
+				} else {
+					// search in normal agent
+					Collection<AgentModel>  allAgents = data.getAllAgents();
+					if(allAgents != null) {
+						
+						for (AgentModel agentModel : allAgents) {
+							if(treeSelectionAddress == agentModel.getAddress()) {
+								((BigBrotherAgentView) detailView).setModel(agentModel);
+								return;
+							}
 						}
 					}
 				}
@@ -319,7 +323,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					if(component instanceof DefaultMutableTreeNode) {
 						DefaultMutableTreeNode node = DefaultMutableTreeNode.class.cast(component);
 						if(node != null) {
-							Object treeSelection = node.getUserObject();
+							treeSelection = node.getUserObject();
 							updateOnSelectDetailView(treeSelection);
 						}
 					}
