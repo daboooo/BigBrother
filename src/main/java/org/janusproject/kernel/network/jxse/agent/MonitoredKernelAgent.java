@@ -69,9 +69,8 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(collecteur,"CollecteurAgent");
-		//launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
+		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
 		launchHeavyAgent(testy, "TEST AGENT");
-		
 		
 		if(this.guiEnabled) {
 			getOrCreateGroup(OrganizationController.class);

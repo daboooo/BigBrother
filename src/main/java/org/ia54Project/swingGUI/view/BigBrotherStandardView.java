@@ -240,7 +240,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					BigBrotherRoleView.class.cast(detailView).setModel((RoleModel) treeSelection);
 				} else {
 					removeDetailViewIfExists();
-					detailView = new BigBrotherRoleView(RoleModel.class.cast(treeSelection));
+					detailView = new BigBrotherRoleView(RoleModel.class.cast(treeSelection), this);
 					rightPane.add(detailView);
 					this.setVisible(true);
 				}
@@ -270,7 +270,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					BigBrotherOrganizationView.class.cast(detailView).setModel((OrganizationModel) treeSelection);
 				} else {
 					removeDetailViewIfExists();
-					detailView = new BigBrotherOrganizationView(OrganizationModel.class.cast(treeSelection));
+					detailView = new BigBrotherOrganizationView(OrganizationModel.class.cast(treeSelection), this);
 					rightPane.add(detailView);
 					this.setVisible(true);
 				}
@@ -345,6 +345,10 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 		if(e.getActionCommand().equals("ORDER_KILL")) {
 			if(treeSelectionAddress instanceof AgentAddress) {
 				bbChannel.get().buildAndSendKill((AgentAddress) treeSelectionAddress);
+			} else if(treeSelectionAddress instanceof RoleAddress) {
+				bbChannel.get().buildAndSendKill((RoleAddress) treeSelectionAddress);
+			} else if(treeSelectionAddress instanceof GroupAddress) {
+				bbChannel.get().buildAndSendKill((GroupAddress) treeSelectionAddress);
 			}
 		}
 		

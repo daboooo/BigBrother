@@ -10,6 +10,7 @@ import java.awt.FlowLayout;
 import javax.swing.JLabel;
 
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -22,12 +23,14 @@ import org.ia54Project.swingGUI.view.BigBrotherDetailView;
 public class BigBrotherRoleView extends BigBrotherDetailView {
 	private JTable tableDesc;
 	private JTable tableValues;
+	private ActionListener listener;
 
 	public BigBrotherRoleView() {
 		initialize();
 	}
 	
-	public BigBrotherRoleView(RoleModel role) {
+	public BigBrotherRoleView(RoleModel role, ActionListener listener) {
+		this.listener = listener;
 		initialize();
 		setModel(role);
 	}
@@ -83,8 +86,11 @@ public class BigBrotherRoleView extends BigBrotherDetailView {
 		panel.add(panel_2, gbc_panel_2);
 		panel_2.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		JButton button = new JButton("Stop");
+		JButton button = new JButton("Kill");
+		button.addActionListener(listener);
+		button.setActionCommand("ORDER_KILL");
 		panel_2.add(button);
+		
 		
 		JButton button_1 = new JButton("Pause/Resume");
 		panel_2.add(button_1);

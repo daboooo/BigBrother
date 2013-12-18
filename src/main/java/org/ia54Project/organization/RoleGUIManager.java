@@ -1,8 +1,5 @@
 package org.ia54Project.organization;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.Timer;
@@ -10,24 +7,26 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.Vector;
 
-import org.ia54Project.BigBrotherUtil;
 import org.ia54Project.agent.BigBrotherChannel;
+import org.ia54Project.dataModel.AgentModel;
 import org.ia54Project.dataModel.BigBrotherListener;
 import org.ia54Project.dataModel.DataModel;
+import org.ia54Project.dataModel.GroupModel;
 import org.ia54Project.dataModel.KernelModel;
 import org.ia54Project.dataModel.MachineModel;
-import org.ia54Project.dataModel.MessageDataModel;
 import org.ia54Project.dataModel.MessageMachineModel;
 import org.ia54Project.dataModel.MessageOrder;
 import org.ia54Project.dataModel.Order;
 import org.ia54Project.dataModel.OrderType;
+import org.ia54Project.dataModel.RoleModel;
 import org.janusproject.kernel.address.Address;
 import org.janusproject.kernel.address.AgentAddress;
-import org.janusproject.kernel.agent.Kernels;
 import org.janusproject.kernel.channels.Channel;
 import org.janusproject.kernel.channels.ChannelInteractable;
+import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.crio.core.RoleAddress;
+import org.janusproject.kernel.crio.organization.GroupListener;
 import org.janusproject.kernel.message.Message;
 import org.janusproject.kernel.message.StringMessage;
 import org.janusproject.kernel.status.Status;
@@ -130,11 +129,6 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 			
 		}
 
-		public void buildAndSendKill(AgentAddress agent) {
-			Order order = new Order(agent,OrderType.KILL);
-			sendMessage(RoleControlManager.class, new MessageOrder(order));
-		}
-		
 		public Address getChannelOwner() {
 			return getAddress();
 		}
@@ -158,10 +152,84 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 			// TODO Auto-generated method stub
 			return getBufferedAppInfo() ;
 		}
+		
+		public void buildAndSendKill(AgentAddress agent) {
+			Order order = new Order(agent,OrderType.KILL);
+			sendMessage(RoleControlManager.class, new MessageOrder(order));
+		}
+
+		public void buildAndSendKill(RoleAddress roleAddressToKill) {
+			Vector<AgentAddress> agentsToKill = buildAgentsList(roleAddressToKill);
+			if(agentsToKill != null) {
+				Order order = new Order(agentsToKill, OrderType.KILL);
+				sendMessage(RoleControlManager.class, new MessageOrder(order));	
+			}
+			
+		}
+		
+		public void buildAndSendKill(GroupAddress groupToKill) {
+			Vector<AgentAddress> agentsToKill = buildAgentsList(groupToKill);
+			if(agentsToKill != null) {
+				Order order = new Order(agentsToKill, OrderType.KILL);
+				sendMessage(RoleControlManager.class, new MessageOrder(order));	
+			}
+		}
 
 
 		
 	}
+	
+	private Vector<AgentAddress> buildAgentsList(GroupAddress groupAddress) {
+		Vector<GroupModel> allGroups = (Vector<GroupModel>) getBufferedAppInfo().getAllGroups();
+		Vector<AgentAddress> agentAddresses = null;
+		GroupModel groupToReach = null;
+		if(groupAddress != null) {
+			for (GroupModel groupModel : allGroups) {
+				if(groupModel.getGroupAddress() == groupAddress) {
+					groupToReach = groupModel;
+					break;
+				}
+			}
+			
+			if(groupToReach != null) {
+				Vector<RoleModel> rolesInGroup = (Vector<RoleModel>) groupToReach.getRoleList();
+				if(rolesInGroup != null) {
+					agentAddresses = new Vector<AgentAddress>();
+					for (RoleModel roleModel : rolesInGroup) {
+						Vector<AgentAddress> agentAddressesFromRole = buildAgentsList(roleModel.getRoleAddress());
+						if(agentAddressesFromRole != null)
+							agentAddresses.addAll(agentAddressesFromRole);
+					}
+				}
+			}
+		}
+		return agentAddresses;
+	}
+	
+	// return all agents who are related to the role defined by roleAddress
+	private Vector<AgentAddress> buildAgentsList(RoleAddress roleAddress) {
+		Vector<RoleModel> allRoles = (Vector<RoleModel>) getBufferedAppInfo().getAllRoles();
+		Vector<AgentAddress> agentAddresses = null;
+		RoleModel roleToKill = null;
+		if(allRoles != null) {
+			for (RoleModel roleModel : allRoles) {
+				if(roleModel.getRoleAddress() == roleAddress) {
+					roleToKill = roleModel;
+					break;
+				}
+			}
+			Vector<AgentModel> agentToKill = (Vector<AgentModel>) roleToKill.getPlayerList();
+			if(agentToKill != null) {
+				agentAddresses = new Vector<AgentAddress>();
+				for (AgentModel agentModel : agentToKill) {
+					agentAddresses.add(agentModel.getAddress());
+				}
+			}
+		}
+		return agentAddresses;
+		
+	}
+	
 	
 	// swap the buffers and notify the UI
 	public synchronized void swapGUIBuffers() {
