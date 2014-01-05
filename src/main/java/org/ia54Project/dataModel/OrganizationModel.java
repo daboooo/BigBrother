@@ -5,6 +5,11 @@ import java.util.Vector;
 
 import org.janusproject.kernel.crio.core.Organization;
 
+/**
+ * Storage class, contains all information related to an Organization
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class OrganizationModel implements Cloneable{
 	private Class<? extends Organization> classe;
 	private Integer nbInstance;

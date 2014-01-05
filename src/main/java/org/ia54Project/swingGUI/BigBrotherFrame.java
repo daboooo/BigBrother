@@ -101,15 +101,7 @@ public class BigBrotherFrame extends JFrame implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
-		if (cmd.equals("UPDATE_PRESSED")) {
-			JButton src = (JButton)e.getSource();
-			BigBrotherChannel chan = getBbChannel().get();
-			if(chan == null) {
-				src.setText("chan null");
-			} else {
-				src.setText(chan.getFirstAgentName());
-			}
-		} else if (cmd.equals("UPDATE_VIEW")) {
+		if (cmd.equals("UPDATE_VIEW")) {
 			stdView.rebuildTree();
 		} else if (cmd.equals("QUIT")) {
 			quit();

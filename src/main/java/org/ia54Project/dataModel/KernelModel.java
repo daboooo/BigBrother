@@ -5,6 +5,11 @@ import java.util.Vector;
 
 import org.janusproject.kernel.address.AgentAddress;
 
+/**
+ * Storage class, contains all information related to a kernel
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class KernelModel implements Cloneable{
 	private String kname;
 	private AgentAddress kernelAddress;

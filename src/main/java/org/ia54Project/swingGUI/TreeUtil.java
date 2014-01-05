@@ -108,14 +108,10 @@ public class TreeUtil {
 	// to determine a node match the object, the test is done between the userContent in the node and the object based on there toString equivalent
 	public static TreePath findInNode(DefaultMutableTreeNode node, Object toFind) {
 		DefaultMutableTreeNode root = node;
-		//System.out.println(root);
 		for (int i = 0; i < root.getChildCount(); i++)
 		{
 			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(i);
-			//System.out.println("search in:" + child.getUserObject());
 			if (child.getUserObject().toString().equals(toFind.toString())) {
-				//System.out.println("FOUND");
-				//System.out.println("Path :" + child.getPath());
 				return new TreePath(((DefaultMutableTreeNode) child.getParent()).getPath());
 			} else  {
 				if(!root.getChildAt(i).isLeaf())
@@ -141,7 +137,6 @@ public class TreeUtil {
 		if(toFind != null) {
 			if(compareNodeWithObjet(node,toFind[0])) {
 				if(node.isLeaf()) {
-					//System.out.println("FOUND EXPAND to :" + node.getPath());
 					tree.expandPath(new TreePath(node.getPath()));
 				} else{
 					if(toFind.length > 1) { // seek in child
@@ -168,18 +163,15 @@ public class TreeUtil {
 	
 	// return true if the userObject of node is equals to obj based on toString
 	public static Boolean compareNodeWithObjet(DefaultMutableTreeNode node, Object obj) {
-		//System.out.println("compare " + node.getUserObject().toString() + " and: " + obj.toString());
 		return(node.getUserObject().toString().equals(obj.toString())) ;
 	}
 	
 	public static void expandToObject(JTree tree, Object obj) {
 		
 		// step 1: find the object in the current tree
-		//System.out.println("TO find:" + obj);
 		TreePath expandPath = findInNode((DefaultMutableTreeNode) tree.getModel().getRoot(), obj);
 		// step2: expand the path to the object
 		if(expandPath != null) {
-			//System.out.println("attempt to expand to :" + expandPath);
 			tree.expandPath(expandPath);
 		}
 		

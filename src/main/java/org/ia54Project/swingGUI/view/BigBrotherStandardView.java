@@ -51,7 +51,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	private final WeakReference<BigBrotherChannel> bbChannel;
 	private Dimension minimumSize = new Dimension(300,600);
 	private JScrollPane leftScroll;
-	private JViewport leftPane ;
 	private JScrollPane rightScroll;
 	private JViewport rightPane;
 	private JTree tree;
@@ -59,7 +58,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	private DataModel data;
 	private Object treeSelectionAddress;
 	private Object treeSelection = null;
-	private TreePath treeLastSelection;
 	private Vector<TreePath> pathSelecteds;
 	private boolean expanding;
 
@@ -84,7 +82,7 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 
 	public void initLeftPane(DataModel data) {
 		leftScroll = new JScrollPane();
-		leftPane = leftScroll.getViewport();
+		leftScroll.getViewport();
 		//Create a tree that allows one treeSelection at a time.
 		tree = new JTree(buildTree());
 		tree.setEditable(true);
@@ -129,8 +127,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	}
 
 	public void rebuildTree() {
-		
-		
 		((DefaultTreeModel)tree.getModel()).setRoot(buildTree());
 		((DefaultTreeModel)tree.getModel()).reload();
 		// try to expend to the path of the previous tree
@@ -150,8 +146,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					// search in kernels
 					Collection<KernelModel>  allKernels = data.getAllKernels();
 					if(allKernels != null) {
-	
-						//System.out.println(" !  ALL Kernel : " + allKernels);
 						for (KernelModel kernelModel : allKernels) {
 							if(treeSelectionAddress == kernelModel.getKernelAddress()) {
 								((BigBrotherKernelView) detailView).setModel(kernelModel);
@@ -175,8 +169,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 			} else if(treeSelectionAddress instanceof RoleAddress) {
 				Collection<RoleModel>  allRoles = data.getAllRoles();
 				if(allRoles != null) {
-
-					//System.out.println(" !  ALL ROLE : " + allRoles);
 					for (RoleModel roleModel : allRoles) {
 						if(treeSelectionAddress == roleModel.getRoleAddress()) {
 							((BigBrotherRoleView) detailView).setModel(roleModel);
@@ -188,8 +180,6 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 				// Search in machines using ip address
 				Collection<MachineModel>  allMachines = data.getAllMachines();
 				if(allMachines != null) {
-					
-					//System.out.println(" !  ALL HOSTS : " + allMachines);
 					for (MachineModel machineModel : allMachines) {
 						if(treeSelectionAddress.equals(machineModel.getIp())) {
 							((BigBrotherMachineView) detailView).setModel(machineModel);
@@ -226,14 +216,12 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	public void updateOnSelectDetailView(Object treeSelection) {
 		if(treeSelection != null) {
 			if(treeSelection instanceof AgentModel) {
-				//System.out.println("updt AGENTMODEL");
 				if(detailView instanceof BigBrotherAgentView) {
 					treeSelectionAddress = ((AgentModel) treeSelection).getAddress();
 					BigBrotherAgentView.class.cast(detailView).setModel((AgentModel) treeSelection);
 				} else {
 					removeDetailViewIfExists();
 					detailView = new BigBrotherAgentView(AgentModel.class.cast(treeSelection),this);
-					//rightPane.setView(detailView);
 					rightPane.add(detailView);
 					this.setVisible(true);
 				}
@@ -284,10 +272,11 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 					BigBrotherGroupView.class.cast(detailView).setModel((GroupModel) treeSelection);
 				} else {
 					removeDetailViewIfExists();
-					detailView = new BigBrotherGroupView(GroupModel.class.cast(treeSelection));
+					detailView = new BigBrotherGroupView(GroupModel.class.cast(treeSelection), this);
 					rightPane.add(detailView);
 					this.setVisible(true);
 				}
+				System.out.println("slected group model: " + treeSelectionAddress);
 				treeSelectionAddress = ((GroupModel) treeSelection).getGroupAddress();
 				
 			}
@@ -304,12 +293,10 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	}
 	
 	public void printDebugStuff(DataModel data) {
-		//System.out.println("change !");
 		Collection<MachineModel> vmm = data.getContent();
 		for (MachineModel machineModel : vmm) {
 			Collection<KernelModel> kList = machineModel.getKernelList();
 			for (KernelModel kernelModel : kList) {
-				//System.out.println("name: "+ kernelModel.getName());	
 			}
 		}
 	}
@@ -336,22 +323,23 @@ public class BigBrotherStandardView extends JSplitPane implements BigBrotherList
 	public void treeCollapsed(TreeExpansionEvent event) {
 		if(!expanding)
 			this.pathSelecteds.remove(event.getPath());
-		//System.out.println("COLLAPSE EVT: " +  event.getPath());
 	}
 
 	public void treeExpanded(TreeExpansionEvent event) {
 		if(!expanding)
 			this.pathSelecteds.add(event.getPath());	
-		//System.out.println("EXPAND EVT: " + event.getPath());
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		System.out.println("event on btn");
 		if(e.getActionCommand().equals("ORDER_KILL")) {
+			System.out.println("ORDER_KILL, tree selection:" + treeSelectionAddress);
 			if(treeSelectionAddress instanceof AgentAddress) {
 				bbChannel.get().buildAndSendKill((AgentAddress) treeSelectionAddress);
 			} else if(treeSelectionAddress instanceof RoleAddress) {
 				bbChannel.get().buildAndSendKill((RoleAddress) treeSelectionAddress);
 			} else if(treeSelectionAddress instanceof GroupAddress) {
+				System.out.println("ORDER_KILL on group");
 				bbChannel.get().buildAndSendKill((GroupAddress) treeSelectionAddress);
 			}
 		}

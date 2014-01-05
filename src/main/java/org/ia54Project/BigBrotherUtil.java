@@ -33,8 +33,6 @@ public class BigBrotherUtil {
 		
 		Kernel kernel = Kernels.get();
 		if (kernel!=null) {
-//			kernel.getExistingGroup(OrganizationController.class);
-//			kernel.
 			BigBrotherChannel channel = kernel.getChannelManager().getChannel(guiAgentAddress,gadr,RoleGUIManager.class,BigBrotherChannel.class);
 			if (channel!=null) {
 				return channel; 
@@ -46,6 +44,10 @@ public class BigBrotherUtil {
 		throw new IllegalStateException("no BigBrother channel for role GUIMANAGER"); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Method to get the computer's name
+	 * @return the computer's name
+	 */
 	public static String getComputerFullName() {
 	    String hostName = null;
 	    try {
@@ -56,6 +58,10 @@ public class BigBrotherUtil {
 	    return hostName;
 	  }//end getComputerFullName
 	
+	/**
+	 * Method to get an ip on a local network
+	 * @return the ip address
+	 */
 	public static String getIP() {
 	    String addr = null;
 	    try {
@@ -164,9 +170,6 @@ public class BigBrotherUtil {
 			System.out.println("rm: Classe" + roleModel.getClasse());
 			System.out.println("rm: GroupAddress" + roleModel.getGroupAdress());
 			System.out.println("rm: RoleAddress" + roleModel.getRoleAddress());
-			System.out.println("rm: isReleased" + roleModel.getIsReleased());
-			System.out.println("rm: isSleeping" + roleModel.getIsSleeping());
-			System.out.println("rm: hasMessage" + roleModel.getHasMesage());
 			Vector<AgentModel> players =  (Vector<AgentModel>) roleModel.getPlayerList();
 			if(players != null) {
 				System.out.println("rm: playerList >>");

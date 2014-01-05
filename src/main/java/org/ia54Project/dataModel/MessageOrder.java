@@ -2,6 +2,11 @@ package org.ia54Project.dataModel;
 
 import org.janusproject.kernel.message.AbstractContentMessage;
 
+/**
+ * Describe a message to send an order
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class MessageOrder extends AbstractContentMessage<Order>{
 	Order order;
 	

@@ -25,6 +25,7 @@ public class RoleExecutant extends Role{
 		if(message != null) {
 			if(message instanceof MessageOrder) {
 				Order order = MessageOrder.class.cast(message).getContent();
+				System.out.println("Order to execute = " + order.getAction() + " on: " + order.getAgents());
 				executeOrder(order);
 			}
 		}

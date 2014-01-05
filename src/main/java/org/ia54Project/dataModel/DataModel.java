@@ -8,6 +8,12 @@ import java.util.Vector;
 
 import org.ia54Project.BigBrotherUtil;
 
+/**
+ * Storage class, this class contains all informations the application needs
+ * It's actually a classes hierarchy
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class DataModel {
 	private Collection<MachineModel> content;
 	private List<BigBrotherListener> _listeners = new ArrayList();

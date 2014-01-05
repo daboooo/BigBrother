@@ -9,9 +9,6 @@ public class MainProgram {
 
 		Kernels.setPreferredKernelFactory(new MonitoredKernelAgentFactory(true));
 		Kernel kernel = Kernels.get(true);
-		
-//		MyAgent myAgent = new MyAgent();
-//		kernel.launchHeavyAgent(myAgent, "MY_AGENT");
 
 	}
 }
