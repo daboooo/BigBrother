@@ -14,7 +14,7 @@ public class KernelModel implements Cloneable{
 	public KernelModel() {
 		setName("Not fully initialized");
 		setOrgList(new Vector<OrganizationModel>());
-		setLonelyAgentList(new Vector<AgentModel>());
+		lonelyAgentList = new Vector<AgentModel>();
 	}
 	
 	public KernelModel(AgentAddress kernelAddress) {

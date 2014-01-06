@@ -139,7 +139,7 @@ public class RoleCollecteur extends Role /*implements KernelListener, RolePlayin
 		}
 		
 		if(cc!= null && cc.isResultAvailable()) {
-			agentRepository =(Repository<AgentAddress, ? extends Agent>) cc.getOutputValueAt(0);
+			agentRepository = (Repository<AgentAddress, ? extends Agent>) cc.getOutputValueAt(0);
 		}
 		
 		// Recuperation des agents grace a l'agentRepository
