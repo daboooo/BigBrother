@@ -7,13 +7,15 @@ import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.Role;
 import org.janusproject.kernel.crio.core.RoleAddress;
 
+/**
+ * Storage class, contains all information related to a RoleModel
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class RoleModel implements Cloneable{
 	Class<? extends Role> classe;
 	RoleAddress roleAddress;
 	GroupAddress groupAdress;
-	Boolean hasMesage;
-	Boolean isReleased;
-	Boolean isSleeping;
 	Collection<AgentModel> playerList;
 	
 	public RoleModel() {
@@ -24,9 +26,6 @@ public class RoleModel implements Cloneable{
 		this.classe = classe;
 		this.roleAddress = roleAddress;
 		this.groupAdress = groupAddress;
-		hasMesage = false;
-		isReleased = false;
-		isSleeping = false;
 		playerList = new Vector<AgentModel>();
 	}
 	
@@ -67,24 +66,6 @@ public class RoleModel implements Cloneable{
 	public void setPlayerList(Collection<AgentModel> playerList) {
 		this.playerList = playerList;
 	}
-	public Boolean getHasMesage() {
-		return hasMesage;
-	}
-	public void setHasMesage(Boolean hasMesage) {
-		this.hasMesage = hasMesage;
-	}
-	public Boolean getIsReleased() {
-		return isReleased;
-	}
-	public void setIsReleased(Boolean isReleased) {
-		this.isReleased = isReleased;
-	}
-	public Boolean getIsSleeping() {
-		return isSleeping;
-	}
-	public void setIsSleeping(Boolean isSleeping) {
-		this.isSleeping = isSleeping;
-	}
 
 	@Override
 	public String toString() {
@@ -97,9 +78,6 @@ public class RoleModel implements Cloneable{
 		
 		roleModel.setClasse(this.getClasse());
 		roleModel.setGroupAdress(this.getGroupAdress());
-		roleModel.setHasMesage(new Boolean(this.getHasMesage()));
-		roleModel.setIsReleased(new Boolean(this.getIsReleased()));
-		roleModel.setIsSleeping(new Boolean(this.getIsSleeping()));
 		roleModel.setRoleAddress(this.getRoleAddress());
 		Vector<AgentModel> newVector = new Vector<AgentModel>();
 		for (AgentModel agentModel : this.getPlayerList()) {

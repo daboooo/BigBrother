@@ -3,6 +3,11 @@ package org.ia54Project.dataModel;
 import java.util.Collection;
 import java.util.Vector;
 
+/**
+ * Storage class, contains all information related to an host
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class MachineModel implements Cloneable{
 	
 	private String name;

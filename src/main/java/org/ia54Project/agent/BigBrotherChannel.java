@@ -10,13 +10,18 @@ import org.janusproject.kernel.channels.Channel;
 import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.crio.core.RoleAddress;
 
+/**
+ * Channel to allow communication between the gui and the role guiManager
+ * this channel should be implemented withing roleGUIManager
+ * @author Arnaud Roblin, Julien Benichou
+ *
+ */
 public interface BigBrotherChannel extends Channel{
-	public String getFirstAgentName();
 	public DataModel getMachineInfos();
 	public void addBigBrotherListener(BigBrotherListener listener);
 	public DataModel getData();
 	public void switchPause();
 	public void buildAndSendKill(AgentAddress agent);
-	public void buildAndSendKill(RoleAddress agent);
+	public void buildAndSendKill(RoleAddress role);
 	public void buildAndSendKill(GroupAddress groupToKill);
 }

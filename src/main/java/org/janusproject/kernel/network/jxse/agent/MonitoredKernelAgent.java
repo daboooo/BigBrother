@@ -61,7 +61,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		super(activator, commitSuicide, startUpListener, applicationName, networkAdapter);
 		guiEnabled = guiB;
 		
-		System.out.println("je suis le kernel");
 		
 		OrganizationManagerAddress = createGroup(OrganizationManager.class);
 		OrganizationControllerAddress = getOrCreateGroup(OrganizationController.class);
@@ -70,7 +69,7 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 		launchHeavyAgent(new ManagerAgent(),"ManagerAgent");
 		launchHeavyAgent(collecteur,"CollecteurAgent");
 		launchHeavyAgent(new ExecutantAgent(),"ExecutantAgent");
-		launchHeavyAgent(testy, "TEST AGENT");
+		//launchHeavyAgent(testy, "TEST AGENT");
 		
 		if(this.guiEnabled) {
 			getOrCreateGroup(OrganizationController.class);
@@ -78,17 +77,11 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 			BigBrotherFrame frame = new BigBrotherFrame(gui,OrganizationControllerAddress);
 			frame.setVisible(true);
 		}
+		System.out.println("Monitored Kernel: monitored kernel agent built");
 	}
 	
 	@Override
 	public Status live() {
-		
-		//launchHeavyAgent(new ExecutantAgent(), "Agent");
-		if(testy != null) {
-			kill(testy.getAddress());
-
-			
-		}
 		return super.live();
 	}
 
@@ -206,8 +199,6 @@ public class MonitoredKernelAgent extends JxtaJxseKernelAgent {
 
 		@Override
 		public Status live() {
-			//print("je prend le role Collecteur");
-			
 			return super.live();
 		}	
 	}

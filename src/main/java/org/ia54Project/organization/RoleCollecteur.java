@@ -55,7 +55,6 @@ public class RoleCollecteur extends Role /*implements KernelListener, RolePlayin
 	@Override
 	public Status live() {
 		Message message = getMessage();
-		//testAccessByRepo();
 		// Lorsque l'on recoit un message "request", celui-ci provient du role Manager
 		// Cela signifie qu'il nous demande des informations
 		// On lui envoie donc un message contenant le KernelModel construit
@@ -77,10 +76,7 @@ public class RoleCollecteur extends Role /*implements KernelListener, RolePlayin
 				
 				buildModel();
 
-				BigBrotherUtil.printKernelModel(kernelModel);
-				
-				//MachineModel newMachineModel = machineModel.clone();
-				//clean(newMachineModel);
+				//BigBrotherUtil.printKernelModel(kernelModel);
 				
 				MessageMachineModel messageMachineModel = new MessageMachineModel(machineModel);
 				sendMessage((RoleAddress) message.getSender(), messageMachineModel);
@@ -148,7 +144,6 @@ public class RoleCollecteur extends Role /*implements KernelListener, RolePlayin
 			agents.add(agentRepository.get(itAgentAddresses.next()));
 		}
 		
-		
 		// Recuperation de la liste des groupes grace a la capacity CapacityGetGroupList
 		try {
 			cc = executeCapacityCall(CapacityGetGroupList.class);
@@ -200,7 +195,7 @@ public class RoleCollecteur extends Role /*implements KernelListener, RolePlayin
 				while(itRoles.hasNext()) {
 					Class<? extends Role> role = itRoles.next();
 					RoleModel roleModel = new RoleModel(role);
-					roleModel.setRoleAddress(getRoleAddress(role));
+					roleModel.setRoleAddress(getRoleAddress(groupModel.getGroupAddress(), role, getPlayer(role, groupModel.getGroupAddress())));
 					roleModel.setGroupAdress(groupModel.getGroupAddress());
 					groupModel.getRoleList().add(roleModel);
 				}
@@ -235,64 +230,4 @@ public class RoleCollecteur extends Role /*implements KernelListener, RolePlayin
 		kernelModel.setOrgList(organizationModels);
 	}
 	
-//	public void testAccessByRepo() {
-//		// ALL DATA ARE HERE -- no listener cuz it looks like its not working for roles , and agent????
-//		
-//		
-//		Repository<AgentAddress, ? extends Agent> repo = null;
-//		CapacityContext cc = null;
-//		try {
-//			cc = executeCapacityCall(CapacityGetAgentRepository.class);
-//		} catch (Exception e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//		if(cc!= null && cc.isResultAvailable()) {
-//			repo =(Repository<AgentAddress, ? extends Agent>) cc.getOutputValueAt(0);
-//		}
-//		
-//		try {
-//			cc = executeCapacityCall(CapacityGetGroupList.class);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		Vector<Group> groups = null;
-//		if(cc!= null && cc.isResultAvailable()) {
-//			groups =(Vector<Group>) cc.getOutputValueAt(0);
-//		}
-//		
-//		
-//		Vector<Agent> agents = new Vector<Agent>();
-//		Iterator<AgentAddress> itagAd = repo.iterator();
-//		SizedIterator<Class <? extends Role>> rolesClasses = null;
-//		Vector<String> rolesStringed = new Vector<String>();
-//		while(itagAd.hasNext()) {
-//			agents.add(repo.get(itagAd.next()));
-//		}
-//		
-//		System.out.println(" ******** FROM kernel: printing group  * * ** **");
-//		for (Group group : groups) {
-//			rolesClasses = getExistingRoles(group.getAddress()); // only replied played roles
-//			System.out.println("Org: " + group.getOrganization());
-//			System.out.println("PlayerCount: " + group.getPlayerCount());
-//			System.out.println("Existing roles in the group: ");
-//			while(rolesClasses.hasNext()) {
-//				System.out.println("    role: " + rolesClasses.next());
-//			}
-//			
-//			// ---> to get non played role cross data with this !
-//			System.out.println(" roleEXECUTANT is NOT played now and should appear in this list:" + getOrganization(OrganizationManager.class).getDefinedRoles());
-//			 
-//			// getRole address using getRoleAddress functions...
-//			
-//			// access to all org class easly with this: getOrganizationRepository().iterator(); may need a capacity though
-//			
-////			for (Agent agent : agents) {
-////				System.out.println("Agent " + agent.getName() + " joue " + agent.getRoles(group.getAddress()) + " DANS " + group.getOrganization());
-////			}
-//
-//		}
-//		System.out.println("<<<<<<<<<<<<<<< kernel: printing group END");
-//	}
 }

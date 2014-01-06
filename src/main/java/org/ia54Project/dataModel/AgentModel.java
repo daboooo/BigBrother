@@ -5,6 +5,11 @@ import java.util.Vector;
 import org.janusproject.kernel.address.AgentAddress;
 import org.janusproject.kernel.agent.Agent;
 
+/**
+ * Storage class who contains all informations we gather for one agent
+ * @author Arnaud Roblin, Julien Benichou
+ *
+ */
 public class AgentModel implements Cloneable{
 	// add container for all required agent info
 	private String name;

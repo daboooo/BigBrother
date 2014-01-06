@@ -34,28 +34,11 @@ public class RoleControlManager extends Role{
 	private Integer nbSend = 0;
 	private final SignalListener signalListener = new MySignalListener();
 	private State state;
-	private long timeToRespond = 1000; // in millisecond
-	private Timer timer;
-	private TimerTask sendResponse;
-	private Vector<KernelModel> kernelsReplied;
-	private Vector<MachineModel> machineReplied;
 	private long testStartTime;
-	private long testWaitTime;
 	boolean t1 = false;
 	boolean t2 = false;
 	boolean t3 = false;
 
-//	RoleControlManager() {
-//		kernelsReplied = new Vector<KernelModel> ();
-//		timer = new Timer();
-//		sendResponse = new TimerTask() {	
-//			@Override
-//			public void run() {
-//				sendMessage(RoleGUIManager.class, new MessageDataModel(buildDataModel()));
-//				state = State.LISTENNING;
-//			}
-//		};
-//	}
 	
 	public Status activate(Object... parameters) {
 	   getSignalManager().setPolicy(SignalPolicy.FIRE_SIGNAL);
@@ -79,9 +62,6 @@ public class RoleControlManager extends Role{
 						if(StringMessage.class.cast(m).getContent().equals("request")) {
 							testStartTime = System.currentTimeMillis();
 							state = State.SENDING;
-							
-//							state = State.BUILDING_DATAMODEL;
-//							timer.schedule(sendResponse, timeToRespond);
 						}
 					} else if (m instanceof MessageOrder) {
 						// forward the order to the manager
@@ -110,7 +90,7 @@ public class RoleControlManager extends Role{
 	}
 	
 	public void testMode() {
-		// sending response
+		// sending fake response
 		
 		if(System.currentTimeMillis() - testStartTime > 100 && !t1) {
 			//print("sending RESPONSE 1");
@@ -179,9 +159,6 @@ public class RoleControlManager extends Role{
 			RoleModel faker = new RoleModel(getClass());
 			faker.setRoleAddress(getAddress());
 			faker.setGroupAdress(getGroupAddress());
-			faker.setHasMesage(hasMessage());
-			faker.setIsReleased(isReleased());
-			faker.setIsSleeping(isSleeping());	
 			faker.setPlayerList(agentList);
 			
 			RoleModel faker2 = new RoleModel(RoleCollecteur.class);

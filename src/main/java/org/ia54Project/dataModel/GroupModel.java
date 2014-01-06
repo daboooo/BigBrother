@@ -7,6 +7,11 @@ import javax.management.relation.RoleList;
 
 import org.janusproject.kernel.crio.core.GroupAddress;
 
+/**
+ * Storage class, contains all information related to a group
+ * @author  Arnaud Roblin, Julien Benichou
+ *
+ */
 public class GroupModel implements Cloneable{
 	private GroupAddress groupAddress;
 	private Collection<RoleModel> roleList;

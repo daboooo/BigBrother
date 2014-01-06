@@ -133,12 +133,6 @@ public class RoleGUIManager extends Role implements ChannelInteractable{
 			return getAddress();
 		}
 
-		// TODO
-		public String getFirstAgentName() {
-			
-			return "yolo";
-		}
-
 		public synchronized DataModel getMachineInfos() {
 			return bufferedAppInfo;
 		}

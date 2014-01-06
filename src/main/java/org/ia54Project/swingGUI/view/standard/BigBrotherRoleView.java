@@ -39,16 +39,16 @@ public class BigBrotherRoleView extends BigBrotherDetailView {
 		tableDesc.getModel().setValueAt("Name :"			, 0, 0);
 		tableDesc.getModel().setValueAt("RoleAdress :"		, 1, 0);
 		tableDesc.getModel().setValueAt("GroupAddress :"	, 2, 0);
-		tableDesc.getModel().setValueAt("hasMessage(s) :"	, 3, 0);
-		tableDesc.getModel().setValueAt("isReleased :"		, 4, 0);
-		tableDesc.getModel().setValueAt("isSleeping :"		, 5, 0);
 
-		tableValues.getModel().setValueAt(role.toString()					, 0, 0);
-		tableValues.getModel().setValueAt(role.getRoleAddress().toString()	, 1, 0);
-		tableValues.getModel().setValueAt(role.getGroupAdress().toString()	, 2, 0);
-		tableValues.getModel().setValueAt(role.getHasMesage().toString()	, 3, 0);
-		tableValues.getModel().setValueAt(role.getIsReleased().toString()	, 4, 0);
-		tableValues.getModel().setValueAt(role.getIsSleeping().toString()	, 5, 0);
+		if(role != null) {
+			tableValues.getModel().setValueAt(role.toString()					, 0, 0);
+			if(role.getRoleAddress() != null)
+				tableValues.getModel().setValueAt(role.getRoleAddress().toString()	, 1, 0);
+			if(role.getGroupAdress() != null) 
+				tableValues.getModel().setValueAt(role.getGroupAdress().toString()	, 2, 0);
+		} else {
+			System.out.println("error gui: role null");
+		}
 	}
 
 	/**

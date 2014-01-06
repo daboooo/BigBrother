@@ -7,6 +7,11 @@ import org.janusproject.kernel.crio.core.GroupAddress;
 import org.janusproject.kernel.status.Status;
 import org.janusproject.kernel.status.StatusFactory;
 
+/**
+ * A simple agent taking the role RoleGUIManager
+ * @author Arnaud Roblin, Julien Benichou
+ *
+ */
 public class BigBrotherGUIAgent extends Agent{
 	private static final long serialVersionUID = 449664383910713509L;
 

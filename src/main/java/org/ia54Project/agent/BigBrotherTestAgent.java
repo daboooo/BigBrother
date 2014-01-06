@@ -4,7 +4,11 @@ import org.ia54Project.dataModel.AgentModel;
 import org.janusproject.kernel.agent.Agent;
 import org.janusproject.kernel.status.Status;
 
-
+/**
+ * A simple agent that can be used for different test
+ * @author Arnaud Roblin, Julien Benichou
+ *
+ */
 public class BigBrotherTestAgent extends Agent {
 
 	/**
@@ -15,7 +19,7 @@ public class BigBrotherTestAgent extends Agent {
 	
 	@Override
 	public Status live() {
-		print("I live MOFO");
+		print("I live testing");
 
 		return super.live();
 	}
